@@ -20,7 +20,8 @@
   "author": "StitchNG <stitchnig@gmail.com> (https://twitter.com/stitchappn)",
   "license": "MIT",
   "dependencies": {
-    "got":"^9.3.2"
+    "got":"^9.3.2",
+    "lodash":"^"
   },
   "devDependencies": {
    
