@@ -10,12 +10,12 @@
     "test":"test"
   },
   "scripts": {
-    "test": "node test/provider.spec.js"
+    "test": "mocha"
   },
   "keywords": [
     "paystack",
     "api-endpoints",
-    "rest"
+    "rest-api"
   ],
   "author": "StitchNG <stitchnig@gmail.com> (https://twitter.com/stitchappn)",
   "license": "MIT",
