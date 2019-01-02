@@ -1,0 +1,36 @@
+{
+  "name": "@stitchng/paystack",
+  "version": "0.1.0",
+  "description": "A NodeJS wrapper for Paystack",
+  "main": "index.js",
+  "files":[
+    "index.js"
+  ],
+  "directories":{
+    "test":"test"
+  },
+  "scripts": {
+    "test": "node test/provider.spec.js"
+  },
+  "keywords": [
+    "paystack",
+    "api-endpoints",
+    "rest"
+  ],
+  "author": "StitchNG <stitchnig@gmail.com> (https://twitter.com/stitchappn)",
+  "license": "MIT",
+  "dependencies": {
+    "got":"^9.3.2"
+  },
+  "devDependencies": {
+   
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stitchng/paystack.git"
+  },
+  "bugs": {
+    "url": "https://github.com/stitchng/paystack/issues"
+  },
+  "homepage": "https://github.com/stitchng/paystack#readme"
+}
