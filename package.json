@@ -1,9 +1,10 @@
 {
   "name": "@stitchng/paystack",
   "version": "0.1.0",
-  "description": "A NodeJS wrapper for Paystack",
+  "description": "A NodeJS wrapper for the Paystack API",
   "main": "index.js",
   "files":[
+    "src",
     "index.js"
   ],
   "directories":{
