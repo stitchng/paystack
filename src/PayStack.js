@@ -1,6 +1,6 @@
 'use strict'
 
-const got require('got')
+const got = require('got')
 const querystring = require('querystring')
 const _ = require('lodash')
 const apiEndpoints = {
