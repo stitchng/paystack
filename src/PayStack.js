@@ -312,10 +312,10 @@ const makeMethod = function (config) {
 	};
 };
 
-class PayStackNgAPI {
+class PayStack {
 	constructor(apiKey, appEnv = 'development') {
   
-    const environment = /^(?:development|local|dev)$/
+    		const environment = /^(?:development|local|dev)$/
 
 		this.api_base = {
 			sandbox: "https://api.paystack.co",
@@ -373,4 +373,4 @@ for (let methodName in apiEndpoints) {
 	}
 }
 
-module.exports = PayStackNgAPI
+module.exports = PayStack
