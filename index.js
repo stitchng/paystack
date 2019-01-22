@@ -13,10 +13,14 @@ const Fees = function(cap, additional_charge, percentage, threshold){
     this.compute()
 };
     
-Fees.INIT_THRESHOLD = 0
-Fees.INIT_CAP = 0
+Fees.INIT_THRESHOLD = 250000
+Fees.INIT_CAP = 200000
 Fees.INIT_PERCENT = 0.015
 Fees.INIT_ADDITIONAL_CHARGE = 10000
+
+Fees.prototype.resetDefaults = function(){
+
+}
 
 Fees.prototype.withAdditionalCharge = function(additional_charge){
         this.additional_charge = additional_charge;
