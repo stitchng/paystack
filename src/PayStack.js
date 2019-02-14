@@ -330,9 +330,20 @@ class PayStack {
 			hooks: {
 				beforeResponse: [
 					async options => {
-              // console.log(options)
+              					// console.log(options)
 					}
-				],
+				],/*
+				onError: [	
+				    error => {	
+					const { response } = error;	
+					if (response && response.body) {	
+						error.name = 'PayStackError';	
+						error.message = `${response.body.message} (${error.statusCode})`;	
+					}
+
+					return error;	
+				    }	
+				],*/
 				afterResponse: [
 					(response, retryWithMergedOptions) => {
 
