@@ -219,14 +219,23 @@ const apiEndpoints = {
 		send_json: true,
 		params: { bank$: Object, metadata: Object, reference: String, amount: Number, email: String },
 		route_params: null
+	},
+	
+	listBanks:{
+		method:'GET',
+		path:'/bank',
+		send_json: true,
+		params: { perPage: Number, page: Number },
+		param_defaults: { perPage: 50, page: 1 },
+		route_params: null
 	}
 
 };
 
 
-/*
+/*!
  * 
-Provides a convenience extension to _.isEmpty which allows for
+ * Provides a convenience extension to _.isEmpty which allows for
  * determining an object as being empty based on either the default
  * implementation or by evaluating each property to undefined, in
  * which case the object is considered empty.
@@ -286,13 +295,13 @@ const setInputValues = (config, inputs) => {
 		case "GET":
 		case "HEAD":
 			label = "query"
-			break;
+		break;
 
 		case "POST":
 		case "PUT":
 		case "PATCH":
 			label = "body"
-			break;
+		break;
 	}
 	
 	httpReqOptions[label] = {}
@@ -327,7 +336,7 @@ const setInputValues = (config, inputs) => {
             							: null
 			
 			if(httpReqOptions[label][input] === null){
-			   	throw new Error(`param: ${input} is not of type ${_type.name}; please provided as needed`)
+			   	throw new Error(`param: ${input} is not of type ${_type.name}; please provide as needed`)
 		  	}
       
 		}
@@ -413,7 +422,7 @@ class PayStack {
 					async options => {
               					// console.log(options)
 					}
-				],/*
+				],
 				onError: [	
 				    error => {	
 					const { response } = error;	
@@ -424,20 +433,25 @@ class PayStack {
 
 					return error;	
 				    }	
-				],*/
+				],
 				afterResponse: [
 					(response, retryWithMergedOptions) => {
 
+						let errorMessage = null
 						switch (response.statusCode) {
 							case 401: // Unauthorized
-
-								break;
+                  						errorMessage = 'Bearer Authorization header may not have been set: Unauthorized (401)';
+							break;
 							case 404: // Not Found
-
-								break;
+                  						errorMessage = '';
+							break;
 							case 403: // Forbidden
-
-								break;
+                  						errorMessage = '';
+							break;
+						}
+						
+						if(errorMessage !== null){
+							// throw new Error(errorMessage)
 						}
 
 						return response
