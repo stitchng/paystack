@@ -3,33 +3,35 @@
 const got = require('got')
 const querystring = require('querystring')
 const _ = require('lodash')
+
 const apiEndpoints = {
 	/*
-    Create customer
-    @param: first_name, last_name, email, phone
-    */
+   	 Create customer
+   	 @params: first_name, last_name, email, phone
+   	 */
 	createCustomer: {
 		method: 'POST',
 		path: '/customer',
 		send_json: true,
-		params: { first_name: String, last_name: String, email: String, phone: String },
+		params: { first_name: String, last_name: String, email$: String, phone: String },
 		route_params: null
 	},
 
 	/*
 	Get customer
-  @param: cust_id
+ 	 @params: customer_id
 	*/
 	getCustomer: {
 		method: 'GET',
-		path: '/customer/{:cust_id}',
+		path: '/customer/{:customer_id}',
 		send_json: true,
 		params: null,
-		route_params: { cust_id: String }
+		route_params: { customer_id: String }
 	},
 
 	/*
 	List customers
+	@params: 
 	*/
 	listCustomers: {
 		method: 'GET',
@@ -41,29 +43,57 @@ const apiEndpoints = {
 
 	/*
 	Update customer
-	@param: first_name, last_name, email, phone
+	@params: first_name, last_name, email (required), phone
 	*/
 	updateCustomer: {
 		method: 'PUT',
-		path: '/customer/{:cust_id}',
+		path: '/customer/{:customer_id}',
 		send_json: true,
 		params: { first_name: String, last_name: String, email$: String, phone: String },
-		route_params: { cust_id: String }
+		route_params: { customer_id: String }
+	},
+	
+	initializeTransaction:{
+		method:'POST',
+		path:'/transaction/initialize',
+		send_json: true,
+		params: { reference: String, callback_url: String, amount$: Number, email: String, plan: String, invoice_limit: Number, metadata: String },
+		param_defaults: { invoice_limit: 0 },
+		route_params: null
+	},
+	
+	/*
+	Get Settlements
+	@params: from, to, subaccount
+	*/
+	getSettlements:{
+		method:'GET',
+		path:'/settlement',
+		send_json: true,
+		params:{from: Date, to: Date, subaccount: String },
+		params_defaults: { subaccount:'none' },
+		route_params: null
 	},
 
 	/*
 	White/Blacklist customer
-	@param: customer, risk_action ('allow' to whitelist or 'deny' to blacklist)
+	@params: customer_id (required), risk_action 
+	
+	@info: [ 'allow' to whitelist or 'deny' to blacklist ]
 	*/
 	setRiskActionOnCustomer: {
 		method: 'POST',
 		path: '/customer/set_risk_action',
 		send_json: true,
-		params: { cust_id$: String, risk_action: String },
+		params: { customer_id$: String, risk_action: String },
 		param_defaults: { risk_action: "allow" },
 		route_params: null
 	},
 
+	/*
+	Deactivate Customer Authoorization 
+	@params: authorization_code
+	*/
 	deactivateAuthOnCustomer: {
 		method: 'POST',
 		path: '/customer/deactivate_authorization',
@@ -71,7 +101,10 @@ const apiEndpoints = {
 		params: { authorization_code: String },
 		route_params: null
 	},
-
+	/*
+	 Create an Invoice
+	 @params: description, line_items, tax, customer, amount, due_date, draft, has_invoice, metadata
+	*/
 	createInvoice: {
 		method: 'GET',
 		path: '/paymentrequest',
@@ -80,7 +113,10 @@ const apiEndpoints = {
 		param_defaults: { draft: false, has_invoice: false, metadata: {} },
 		route_params: null
 	},
-
+	/*
+	 View an Invoice
+	 @params: invoice_id_or_code
+	*/
 	viewInvoice: {
 		method: 'GET',
 		path: '/paymentrequest/{:invoice_id_or_code}',
@@ -88,29 +124,56 @@ const apiEndpoints = {
 		params: null,
 		route_params: { invoice_id_or_code: String }
 	},
-
+	/*
+	 Update an Invoice
+	 @params: description, line_items, customer <customer_id>, due_date, metadata, send_notification
+	*/
 	updateInvoice: {
-		method: 'POST',
+		method: 'PUT',
 		path: '/paymentrequest/{:invoice_id_or_code}',
 		send_json: true,
-		params: { description: String, line_items: Array, tax: Array, cust_id: String, due_date: String, metadata: Object, send_notification: Boolean },
+		params: { description: String, line_items: Array, tax: Array, customer: String, due_date: String, metadata: Object, send_notification: Boolean },
 		route_params: { invoice_id_or_code: String }
 	},
-
+	
+	/*
+	 List All Invoices
+	 @params: customer <customer_id>, status, currency, paid, include_archive
+	*/
 	listInvoices: {
 		method: 'GET',
 		path: '/paymentrequest',
 		send_json: true,
-		params: { cust_id: String, status: String, currency: String, paid: String, include_archive: String },
+		params: { customer: String, status: String, currency: String, paid: String, include_archive: String },
 		route_params: null
 	},
-
+	
+	/*
+	 Verify Invoice
+	 @params: invoice_code
+	*/
+	verifyInvoice: {
+		method:'GET',
+		path:'/paymentrequest/verify/{:invoice_code}',
+		send_json: true,
+		params: null,
+		route_params: { invoice_code: String }
+	},
 	archiveInvoice: {
 		method: 'POST',
 		path: '/invoice/archive/{:invoice_id_or_code}',
 		send_form: true,
 		params: null,
 		route_params: { invoice_id_or_code: String }
+	},
+	
+	markAsPaid:{
+		method:'POST',
+		path: '/paymentrequest/mark_as_paid/{:id}',
+		send_json: true,
+		params: { amount_paid$: Number, paid_by$: String, payment_date$: String, payment_method$: String, note: String },
+		param_defaults: { payment_method: "Cash"},
+		route_params: { id: String }
 	},
 
 	createRefund: {
@@ -227,6 +290,10 @@ const setInputValues = (config, inputs) => {
 			break;
 	}
 	httpReqOptions[label] = {}
+	
+	if(config.param_defaults){
+		inputs = Object.assign({}, config.param_defaults, inputs)
+	}
 
 	for (let input in inputs) {
 
@@ -243,13 +310,19 @@ const setInputValues = (config, inputs) => {
          _type = config.params[input];
       }
       
-      if(_required && !!_input){
+      if(_required && (_input == void 0)){
+      	throw new Error(`param: ${input} is required but not provided; please provide as needed`)
+      }
           httpReqOptions[label][input] = isTypeOf(_input, _type)
             ? (label === "query"
               ? querystring.escape(_jsonify(_input))
               : _jsonify(_input))
             : null
-      }
+			
+			if(httpReqOptions[label][input] === null){
+			   	throw new Error(`param: ${input} is not of type ${_type.name}; please provided as needed`)
+			   }
+      
 		}
 	}
 
@@ -273,7 +346,7 @@ const makeMethod = function (config) {
 
 
 	if (config.send_json) {
-		httpConfig.headers['Content-Type'] = httpConfig.headers['Accept']
+		httpConfig.headers['Content-Type'] = httpConfig.headers['Accept'] // 'application/json'
 	} else if (config.send_form) {
 		httpConfig.headers['Content-Type'] = 'x-www-form-urlencoded'
 	}
