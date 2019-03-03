@@ -1,8 +1,18 @@
 # Paystack
 A NodeJS Wrapper for Paystack API - https://www.paystack.com
 
-# Overview
+## Overview
 This project provides an easy-to-use object-oriented API to access endpoints delineated at https://developers.paystack.co/reference
+
+## Getting Started
+
+>Install from the NPM Registry
+
+```bash
+
+    $ npm i --save @stitchng/paystack
+
+```
 
 # Usage
 
