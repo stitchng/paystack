@@ -294,6 +294,7 @@ const setInputValues = (config, inputs) => {
 			label = "body"
 			break;
 	}
+	
 	httpReqOptions[label] = {}
 	
 	if(config.param_defaults){
@@ -305,28 +306,29 @@ const setInputValues = (config, inputs) => {
 		if (inputs.hasOwnProperty(input)) {
     
 			let _input = inputs[input];
-      let _type = null
-      let _required = false
+      			let _type = null
+      			let _required = false
       
-      if(config.params[input+'$']){
-         _required = true;
-         _type = config.params[input+'$']
-      }else{
-         _type = config.params[input];
-      }
+		      	if(config.params[input+'$']){
+			 	_required = true;
+			 	_type = config.params[input+'$']
+		      	}else{
+			 	_type = config.params[input];
+		      	}
       
-      if(_required && (_input == void 0)){
-      	throw new Error(`param: ${input} is required but not provided; please provide as needed`)
-      }
-          httpReqOptions[label][input] = isTypeOf(_input, _type)
-            ? (label === "query"
-              ? querystring.escape(_jsonify(_input))
-              : _jsonify(_input))
-            : null
+      			if(_required && (_input == void 0)){
+      				throw new Error(`param: ${input} is required but not provided; please provide as needed`)
+      			}
+          
+			httpReqOptions[label][input] = isTypeOf(_input, _type)
+            							? (label === "query"
+              								? querystring.escape(_jsonify(_input))
+              								: _jsonify(_input))
+            							: null
 			
 			if(httpReqOptions[label][input] === null){
 			   	throw new Error(`param: ${input} is not of type ${_type.name}; please provided as needed`)
-			   }
+		  	}
       
 		}
 	}
@@ -337,6 +339,7 @@ const setInputValues = (config, inputs) => {
 			: JSON.stringify(httpReqOptions[label])
 		)
 		: querystring.stringify(httpReqOptions[label]))
+	
 	return inputValues
 };
 
