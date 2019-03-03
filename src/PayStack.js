@@ -451,7 +451,7 @@ class PayStack {
 						}
 						
 						if(errorMessage !== null){
-							// throw new Error(errorMessage)
+							;// throw new Error(errorMessage)
 						}
 
 						return response
