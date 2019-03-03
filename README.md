@@ -10,7 +10,7 @@ This project provides an easy-to-use object-oriented API to access endpoints del
 
 var PayStack = require('@stitchng/paystack')
 
-var APIKEY = 'pk_2hWyQ6HW73jS8p1IkXmSWOlE4y9Inhgyd6g5f2R7'
+var APIKEY = 'sk_test_2hWyQ6HW73jS8p1IkXmSWOlE4y9Inhgyd6g5f2R7'
 var environment = process.env.NODE_ENV
 
 var instance = new PayStack(APIKEY, environment)
@@ -32,3 +32,8 @@ promise.then(function(response){
 MIT
 
 # Credits
+
+- Ifeora Okechukwu (https://twitter.com/isocroft)
+- Ahmad Abdul-Azziz (https://instagram.com/dev_amaz)
+
+# Contributing
