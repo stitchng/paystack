@@ -10,7 +10,7 @@ This project provides an easy-to-use object-oriented API to access endpoints del
 
 ```bash
 
-    $ npm i --save @stitchng/paystack
+    $ npm i --save paystack
 
 ```
 
@@ -18,7 +18,7 @@ This project provides an easy-to-use object-oriented API to access endpoints del
 
 ```js
 
-var PayStack = require('@stitchng/paystack')
+var PayStack = require('paystack')
 
 var APIKEY = 'sk_test_2hWyQ6HW73jS8p1IkXmSWOlE4y9Inhgyd6g5f2R7'
 var environment = process.env.NODE_ENV
