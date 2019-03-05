@@ -8,22 +8,9 @@ const customers = require('./endpoints/customers.js')
 const transactions = require('./endpoints/transactions.js')
 const subaccounts = require('./endpoints/subaccounts.js')
 const plans = require('./endpoints/plans.js')
+const settlements = require('./endpoints/settlements.js')
 
 const apiEndpoints = {
-	
-	
-	/*
-	Get Settlements
-	@params: from, to, subaccount
-	*/
-	getSettlements:{
-		method:'GET',
-		path:'/settlement',
-		send_json: true,
-		params:{from: Date, to: Date, subaccount: String },
-		params_defaults: { subaccount:'none' },
-		route_params: null
-	},
 
 	/*
 	White/Blacklist customer
