@@ -1,3 +1,4 @@
+'use strict'
 
 module.exports = {
       /*
@@ -58,6 +59,21 @@ module.exports = {
 		path: '/customer/deactivate_authorization',
 		send_json: true,
 		params: { authorization_code: String },
+		route_params: null
+	},
+  
+  /*
+	White/Blacklist Customer
+	@params: customer_id (required), risk_action 
+	
+	@info: [ 'allow' to whitelist or 'deny' to blacklist ]
+	*/
+	setRiskActionOnCustomer: {
+		method: 'POST',
+		path: '/customer/set_risk_action',
+		send_json: true,
+		params: { customer_id$: String, risk_action: String },
+		param_defaults: { risk_action: "allow" },
 		route_params: null
 	}
 	
