@@ -8,40 +8,16 @@ const customers = require('./endpoints/customers.js')
 const transactions = require('./endpoints/transactions.js')
 const subaccounts = require('./endpoints/subaccounts.js')
 const plans = require('./endpoints/plans.js')
-const refund = require('./endpoints/refunds.js')
+const refunds = require('./endpoints/refunds.js')
+const charges = require('./endpoints/charges.js')
 const invoices = require('./endpoints/invoices.js')
 const settlements = require('./endpoints/settlements.js')
 
 const apiEndpoints = {
   /*
-   Create Refund
-   @param: reference, amount, currency, customer_note, merchant_note
+   Charge Card
+   @param: card, metadata, reference, amount, email
   */
-	createRefund: {
-		method: 'POST',
-		path: '/refund',
-		send_json: true,
-		params: { reference: String, amount: Number, currency: String, customer_note: String, merchant_note: String },
-    param_defaults:{ currency: 'NRN' },
-		route_params: null
-	},
-
-	listRefund: {
-		method: 'GET',
-		path: '/refund',
-		send_json: false,
-		params: { reference: String, currency: String },
-		route_params: null
-	},
-
-	fetchRefund: {
-		method: 'GET',
-		path: '/refund/{:reference}',
-		send_json: false,
-		params: null,
-		route_params: { reference: String }
-	},
-
 	chargeCard: {
 		method: 'POST',
 		path: '/charge',
