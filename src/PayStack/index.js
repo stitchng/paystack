@@ -11,39 +11,24 @@ const plans = require('./endpoints/plans.js')
 const refunds = require('./endpoints/refunds.js')
 const charges = require('./endpoints/charges.js')
 const invoices = require('./endpoints/invoices.js')
+const transfers = require('./endpoints/transfers.js')
+const miscellaneous = require('./endpoints/miscellaneous.js')
 const settlements = require('./endpoints/settlements.js')
 
-const apiEndpoints = {
-  /*
-   Charge Card
-   @param: card, metadata, reference, amount, email
-  */
-	chargeCard: {
-		method: 'POST',
-		path: '/charge',
-		send_json: true,
-		params: { card$: Object, metadata: Object, reference: String, amount: Number, email: String },
-		route_params: null
-	},
-
-	chargeBank: {
-		method: 'POST',
-		path: '/charge',
-		send_json: true,
-		params: { bank$: Object, metadata: Object, reference: String, amount: Number, email: String },
-		route_params: null
-	},
-	
-	listBanks:{
-		method:'GET',
-		path:'/bank',
-		send_json: true,
-		params: { perPage: Number, page: Number },
-		param_defaults: { perPage: 50, page: 1 },
-		route_params: null
-	}
-
-};
+/* Any param with '$' at the end is a REQUIRED param both for request body param(s)  request route params */
+const apiEndpoints = Object.assign(
+  {}, 
+  customers, 
+  transactions, 
+  subaccounts, 
+  plans, 
+  refunds, 
+  charges, 
+  invoices, 
+  transfers,
+  miscellaneous,
+  settlements
+)
 
 
 /*!
