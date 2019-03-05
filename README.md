@@ -10,7 +10,7 @@ This project provides an easy-to-use object-oriented API to access endpoints del
 
 ```bash
 
-    $ npm i --save paystack
+    $ npm i --save paystack-node
 
 ```
 
