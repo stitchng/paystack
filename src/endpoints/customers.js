@@ -49,5 +49,16 @@ module.exports = {
 		route_params: { customer_id: String }
 	},
 	
+  /*
+	Deactivate Customer Authoorization 
+	@params: authorization_code
+	*/
+	deactivateAuthOnCustomer: {
+		method: 'POST',
+		path: '/customer/deactivate_authorization',
+		send_json: true,
+		params: { authorization_code: String },
+		route_params: null
+	}
 	
 }
