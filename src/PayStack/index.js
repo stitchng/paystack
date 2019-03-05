@@ -274,7 +274,7 @@ class PayStack {
 
 for (let methodName in apiEndpoints) {
 	if (apiEndpoints.hasOwnProperty(methodName)) {
-		PayStackNgAPI.prototype[methodName] = makeMethod(apiEndpoints[methodName])
+		PayStack.prototype[methodName] = makeMethod(apiEndpoints[methodName])
 	}
 }
 
