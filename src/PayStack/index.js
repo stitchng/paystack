@@ -12,6 +12,7 @@ const refunds = require('../endpoints/refunds.js')
 const charges = require('../endpoints/charges.js')
 const invoices = require('../endpoints/invoices.js')
 const transfers = require('../endpoints/transfers.js')
+const verifications = require('../endpoints/verifications.js')
 const miscellaneous = require('../endpoints/miscellaneous.js')
 const settlements = require('../endpoints/settlements.js')
 
@@ -26,6 +27,7 @@ const apiEndpoints = Object.assign(
   charges, 
   invoices, 
   transfers,
+  verifications,
   miscellaneous,
   settlements
 )
