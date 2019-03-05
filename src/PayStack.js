@@ -5,6 +5,7 @@ const querystring = require('querystring')
 const _ = require('lodash')
 
 const customers = require('./endpoints/customers.js')
+const transactions = require('./endpoints/transactions.js')
 const subaccounts = require('./endpoints/subaccounts.js')
 const plans = require('./endpoints/plans.js')
 
@@ -39,17 +40,6 @@ const apiEndpoints = {
 		route_params: null
 	},
 
-	/*
-	Deactivate Customer Authoorization 
-	@params: authorization_code
-	*/
-	deactivateAuthOnCustomer: {
-		method: 'POST',
-		path: '/customer/deactivate_authorization',
-		send_json: true,
-		params: { authorization_code: String },
-		route_params: null
-	},
 	/*
 	 Create an Invoice
 	 @params: description, line_items, tax, customer, amount, due_date, draft, has_invoice, metadata
