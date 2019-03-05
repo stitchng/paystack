@@ -8,30 +8,21 @@ const customers = require('./endpoints/customers.js')
 const transactions = require('./endpoints/transactions.js')
 const subaccounts = require('./endpoints/subaccounts.js')
 const plans = require('./endpoints/plans.js')
+const refund = require('./endpoints/refunds.js')
+const invoices = require('./endpoints/invoices.js')
 const settlements = require('./endpoints/settlements.js')
 
 const apiEndpoints = {
-
-	/*
-	White/Blacklist customer
-	@params: customer_id (required), risk_action 
-	
-	@info: [ 'allow' to whitelist or 'deny' to blacklist ]
-	*/
-	setRiskActionOnCustomer: {
-		method: 'POST',
-		path: '/customer/set_risk_action',
-		send_json: true,
-		params: { customer_id$: String, risk_action: String },
-		param_defaults: { risk_action: "allow" },
-		route_params: null
-	},
-
+  /*
+   Create Refund
+   @param: reference, amount, currency, customer_note, merchant_note
+  */
 	createRefund: {
 		method: 'POST',
 		path: '/refund',
 		send_json: true,
 		params: { reference: String, amount: Number, currency: String, customer_note: String, merchant_note: String },
+    param_defaults:{ currency: 'NRN' },
 		route_params: null
 	},
 
@@ -158,34 +149,33 @@ const setInputValues = (config, inputs) => {
 
 	for (let input in inputs) {
 
-		if (inputs.hasOwnProperty(input)) {
+		  if (inputs.hasOwnProperty(input)) {
     
-			let _input = inputs[input];
+			      let _input = inputs[input];
       			let _type = null
       			let _required = false
       
 		      	if(config.params[input+'$']){
-			 	_required = true;
-			 	_type = config.params[input+'$']
+			 	        _required = true;
+			 	        _type = config.params[input+'$']
 		      	}else{
-			 	_type = config.params[input];
+			 	        _type = config.params[input];
 		      	}
       
       			if(_required && (_input == void 0)){
       				throw new Error(`param: ${input} is required but not provided; please provide as needed`)
       			}
           
-			httpReqOptions[label][input] = isTypeOf(_input, _type)
+			      httpReqOptions[label][input] = isTypeOf(_input, _type)
             							? (label === "query"
               								? querystring.escape(_jsonify(_input))
               								: _jsonify(_input))
             							: null
 			
-			if(httpReqOptions[label][input] === null){
-			   	throw new Error(`param: ${input} is not of type ${_type.name}; please provide as needed`)
-		  	}
-      
-		}
+			      if(httpReqOptions[label][input] === null){
+			   	      throw new Error(`param: ${input} is not of type ${_type.name}; please provide as needed`)
+		  	    }
+		  }
 	}
 
 	inputValues[label] = (label === "body"
