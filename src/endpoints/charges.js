@@ -1,5 +1,7 @@
 'use strict'
 
+/* Charging banks & cards are split into two separate method APIs */
+
 module.exports = {
     /*
    Charge Card
@@ -23,5 +25,64 @@ module.exports = {
 		send_json: true,
 		params: { bank$: Object, metadata: Object, reference: String, amount: Number, email: String },
 		route_params: null
-	}
+	},
+  
+  /*
+   Submit PIN
+   @param: pin, reference
+  */
+  submitPIN:{
+    method:'POST',
+    path:'/charge/submit_pin',
+    send_json: true,
+    params: { pin$: String, reference$: String },
+    route_params: null
+  },
+  
+  /*
+   Submit OTP
+   @param: otp, reference
+  */
+  submitOTP:{
+    method:'POST',
+    path:'/charge/submit_otp',
+    send_json: true,
+    params: { otp$: String, reference$: String },
+    route_params: null
+  },
+  
+  /*
+   Submit Phone
+   @param: phone, reference
+  */
+  submitOTP:{
+    method:'POST',
+    path:'/charge/submit_phone',
+    send_json: true,
+    params: { phone$: String, reference$: String },
+    route_params: null
+  },
+  
+  /*
+   Submit Birthday
+   @param: birthday, reference
+  */
+  submitBirthday:{
+    method:'POST',
+    path:'/charge/submit_birthday',
+    send_json: true,
+    params: { birthday$: Date, reference$: String },
+    route_params: null
+  },
+  
+  /*
+    Check Pending Charge
+    @param: reference
+  */
+  checkPendingCharge:{
+    method:'GET',
+    path:'/charge/{:reference}',
+    params: null,
+    route_params: { reference: String }
+  }
 }
