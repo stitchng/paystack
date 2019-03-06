@@ -7,7 +7,7 @@ module.exports = {
     */
     createSubscription:{
       method:'POST',
-      plan:'/subscription',
+      path:'/subscription',
       send_json: true,
       params:{ customer$: String, plan$: String, authorization$: String, start_date: Date },
       route_params: null
