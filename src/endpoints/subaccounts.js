@@ -2,7 +2,8 @@
 
 module.exports = {
     /*
-    
+      Create Sub Account
+      @param: business_name, settlement_bank, account_number, percentage_charge, primary_contact_email, primary_contact_name, primary_contact_phone, metadata, settlement_schedule
     */
     createSubaccount:{
        method:'POST',
