@@ -5,7 +5,7 @@ module.exports = {
 	Get Settlements
 	@params: from, to, subaccount
 	*/
-	getSettlements:{
+	fetchSettlements:{
 		method:'GET',
 		path:'/settlement',
 		send_json: true,
