@@ -40,6 +40,7 @@ module.exports = {
     resolvePhoneNumber:{
       method:'POST',
       path:'/verifications',
+      send_json: true,
       params: { verification_type$: String, phone$: String, callback_url$: String },
       param_defaults:{ verification_type: 'truecaller' },
       route_params: null
