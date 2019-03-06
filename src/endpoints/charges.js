@@ -55,7 +55,7 @@ module.exports = {
    Submit Phone
    @param: phone, reference
   */
-  submitOTP:{
+  submitPhone:{
     method:'POST',
     path:'/charge/submit_phone',
     send_json: true,
