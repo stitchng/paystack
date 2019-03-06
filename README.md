@@ -18,14 +18,21 @@ This project provides an easy-to-use object-oriented API to access endpoints del
 
 ```js
 
-var PayStack = require('paystack')
+var PayStack = require('paystack-node')
 
 var APIKEY = 'sk_test_2hWyQ6HW73jS8p1IkXmSWOlE4y9Inhgyd6g5f2R7'
 var environment = process.env.NODE_ENV
 
 var instance = new PayStack(APIKEY, environment)
 
-var promise = instance.getSettlements({
+/* 
+  NOTE: All fields/params that require dates should be set to
+  instances of the `Date()` constructor as they will
+  eventually be turned into the ISO 8601 format (String)
+  using `toJSON()` method for date instances/objects
+*/
+
+var promise = instance.fetchSettlements({
   from:new Date("2017-02-09"), 
   to:new Date()
 })
