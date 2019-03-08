@@ -6,7 +6,7 @@ module.exports = {
 	 @params: description, line_items, tax, customer, amount, due_date, draft, has_invoice, metadata
 	*/
 	createInvoice: {
-		method: 'GET',
+		method: 'POST',
 		path: '/paymentrequest',
 		send_json: true,
 		params: { description: String, line_items: Array, tax: Array, customer$: String, amount$: Number, due_date$: String, draft: Boolean, has_invoice: Boolean, metadata: Object, send_notification: Boolean },
@@ -43,7 +43,7 @@ module.exports = {
 	listInvoices: {
 		method: 'GET',
 		path: '/paymentrequest',
-		send_json: true,
+		send_json: false,
 		params: { customer: String, status: String, currency: String, paid: String, include_archive: String },
 		route_params: null
 	},
