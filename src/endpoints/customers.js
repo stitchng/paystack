@@ -20,7 +20,6 @@ module.exports = {
 	getCustomer: {
 		method: 'GET',
 		path: '/customer/{:customer_id}',
-		send_json: true,
 		params: null,
 		route_params: { customer_id: String }
 	},
@@ -32,7 +31,6 @@ module.exports = {
 	listCustomers: {
 		method: 'GET',
 		path: '/customer',
-		send_json: true,
 		params: { perPage: Number, page: Number },
 		param_defaults: { perPage: 50, page: 1 },
 		route_params: null
