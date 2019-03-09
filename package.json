@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "description": "A NodeJS wrapper for the Paystack API",
   "main": "index.js",
-  "files":[
+  "files": [
     "src",
     "index.js"
   ],
-  "directories":{
-    "test":"test"
+  "directories": {
+    "test": "test"
   },
   "scripts": {
     "lint": "./node_modules/standard/bin/cmd.js --fix",
@@ -22,8 +22,8 @@
   "author": "StitchNG <stitchnig@gmail.com> (https://twitter.com/stitchappn)",
   "license": "MIT",
   "dependencies": {
-    "got":"^9.3.2",
-    "lodash":"^4.17.0"
+    "got": "^9.3.2",
+    "lodash": "^4.17.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",

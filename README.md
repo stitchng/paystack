@@ -51,6 +51,6 @@ MIT
 # Credits
 
 - [Ifeora Okechukwu <Head Of Technology - Oparand>](https://twitter.com/isocroft)
-- [Ahmad Abdul-Azziz <Head - NodeJS Foundation>](https://instagram.com/dev_amaz)
+- [Ahmad Abdul-Aziz <Software Engineer>](https://twitter.com/dev_amaz)
 
 # Contributing
