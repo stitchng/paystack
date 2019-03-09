@@ -36,6 +36,20 @@ module.exports = {
       send_json: true,
       params:{ code : String, token: String },
       route_params: null
-    }
+    },
+
+    /*
+      Enable Subscription
+      @param: code, token
+    */
+    enableSubscription:{
+      method:'POST',
+      path:'/subscription/enable',
+      send_json: true,
+      params:{ code : String, token: String },
+      route_params: null
+    },
+
+    
 
 }
