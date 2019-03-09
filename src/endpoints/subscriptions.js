@@ -50,6 +50,15 @@ module.exports = {
       route_params: null
     },
 
-    
+     /*
+      Fetch Subscription
+      @param: id_or_subscription_code
+    */
+    fetchSubscription:{
+      method:'GET',
+      path:'/subscription/{:id_or_subscription_code}',
+      params: null,
+      route_params:{ id_or_subscription_code$: String }
+    }
 
 }
