@@ -24,6 +24,18 @@ module.exports = {
       params:{ perPage : Number, page: Number, customer: Number, plan: Number},
       param_defaults:{perPage : 50, page: 1, customer: 0, plan: 0},
       route_params: null
+    },
+
+    /*
+      Disable Subscription
+      @param: code, token
+    */
+    disableSubscription:{
+      method:'POST',
+      path:'/subscription/disable',
+      send_json: true,
+      params:{ code : String, token: String },
+      route_params: null
     }
 
 }
