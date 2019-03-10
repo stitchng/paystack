@@ -52,7 +52,7 @@ module.exports = {
 
 
 	 /*
-	 Initialize Transaction
+	 Charge Authorization
 	 @params: reference, authorization_code, amount,  plan, currency, email, metadata, subaccount, transaction_charge, bearer, invoice_limit, queue
 	*/
 	chargeAuthorization:{
@@ -63,6 +63,72 @@ module.exports = {
 		param_defaults: {  amount : 0,  currency : 'NGN', transaction_charge : 0, bearer : 'account' , invoice_limit : 0 },
 		route_params: null
 	},
+
+
+ /*
+	 View Transaction Timeline
+	 @params: id
+	*/
+	viewTransactionTimeline:{
+		method:'GET',
+		path:'/transaction/timeline/{:id}',
+		send_json: false,
+		route_params: { id: Number }
+	},
+
+	 /*
+	 Transaction Totals
+	 @params: from, to
+	*/
+	transactionTotals:{
+		method:'GET',
+		path:'/transaction/totals',
+		send_json: false,
+		params: { from : Date, to : Date},
+		route_params: null
+	},
+
+	/*
+	 Export Transaction 
+	 @params: from, to, settled, payment_page, customer, currency, settlement, amount,  status
+	*/
+	exportTransaction:{
+		method:'GET',
+		path:'/transaction/export',
+		send_json: false,
+		params: { from : Date, to : Date, settled : Boolean, payment_page : Number, customer : Number, currency : String, settlement : Number, amount : Number,  status : String },
+		param_defaults: { payment_page : 0, customer : 0,  settlement : 0, amount : 0,  status : 'success'},
+		route_params: null
+	},
+
+	/*
+	 Request Reauthorization
+	 @params: reference, authorization_code, amount, currency, email, metadata
+	*/
+	requestReauthorization:{
+		method:'POST',
+		path:'/transaction/request_reauthorization',
+		send_json: true,
+		params: { reference : String, authorization_code$ : String, amount$ : Number, currency : String, email$ : String, metadata : Object },
+		param_defaults: {  amount : 0,  currency : 'NGN' },
+		route_params: null
+	},
+
+	/*
+	 Check Authorization 
+	 @params: from, to, settled, payment_page, customer, currency, settlement, amount,  status
+	*/
+	checkAuthorization:{
+		method:'POST',
+		path:'/transaction/check_authorization',
+		send_json: true,
+		params: { authorization_code$ : String, amount$ : Number, email$ : String, currency : String },
+		param_defaults: {  amount : 0,  currency : 'NGN' },
+		route_params: null
+	}
+
+
+
 
 
 }
