@@ -15,6 +15,7 @@ const transfers = require('../endpoints/transfers.js')
 const verifications = require('../endpoints/verifications.js')
 const miscellaneous = require('../endpoints/miscellaneous.js')
 const settlements = require('../endpoints/settlements.js')
+const subscriptions = require('../endpoints/subscriptions')
 
 /* Any param with '$' at the end is a REQUIRED param both for request body param(s)  request route params */
 const apiEndpoints = Object.assign(
@@ -29,7 +30,8 @@ const apiEndpoints = Object.assign(
   transfers,
   verifications,
   miscellaneous,
-  settlements
+	settlements,
+	subscriptions
 )
 
 
