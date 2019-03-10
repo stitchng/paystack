@@ -58,7 +58,7 @@ module.exports = {
       method:'GET',
       path:'/subscription/{:id_or_subscription_code}',
       params: null,
-      route_params:{ id_or_subscription_code$: String }
+      route_params:{ id_or_subscription_code : String }
     }
 
 }
