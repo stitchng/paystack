@@ -13,4 +13,16 @@ module.exports = {
 		param_defaults: { invoice_limit: 0 },
 		route_params: null
 	},
+
+	 /*
+	 Verify Transaction
+	 @params: reference
+	*/
+	verifyTransaction:{
+		method:'GET',
+		path:'/transaction/verify/{:reference}',
+		send_json: false,
+		route_params: { reference: String }
+	},
+
 }
