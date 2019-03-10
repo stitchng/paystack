@@ -19,19 +19,19 @@ const subscriptions = require('../endpoints/subscriptions')
 
 /* Any param with '$' at the end is a REQUIRED param both for request body param(s)  request route params */
 const apiEndpoints = Object.assign(
-  {}, 
-  customers, 
-  transactions, 
-  subaccounts, 
-  plans, 
-  refunds, 
-  charges, 
-  invoices, 
-  transfers,
-  verifications,
-  miscellaneous,
-	settlements,
-	subscriptions
+  	{}, 
+  	customers, 
+  	transactions, 
+  	subaccounts, 
+  	plans, 
+  	refunds, 
+  	charges, 
+  	invoices, 
+  	transfers,
+  	verifications,
+  	miscellaneous,
+  	settlements,
+  	subscriptions
 )
 
 
@@ -112,35 +112,36 @@ const setInputValues = (config, inputs) => {
 		inputs = Object.assign({}, config.param_defaults, inputs)
 	}
 
-	for (let input in inputs) {
+	for (var input in config.params) {
 
-		  if (inputs.hasOwnProperty(input)) {
-    
-			      let _input = inputs[input];
-      			let _type = null
-      			let _required = false
-      
-		      	if(config.params[input+'$']){
-			 	        _required = true;
-			 	        _type = config.params[input+'$']
-		      	}else{
-			 	        _type = config.params[input];
-		      	}
-      
-      			if(_required && (_input == void 0)){
-      				throw new Error(`param: ${input} is required but not provided; please provide as needed`)
-      			}
-          
-			      httpReqOptions[label][input] = isTypeOf(_input, _type)
-            							? (label === "query"
-              								? querystring.escape(_jsonify(_input))
-              								: _jsonify(_input))
-            							: null
+		if (config.params.hasOwnProperty(input)) {
+
+			let param = input.replace('$', '')
+			let _input = inputs[param];
+			let _type = config.params[input]
+			let _required = false
+	
+			if((input.indexOf('$') + 1) === (input.length)){
+				_required = true;
+			}
 			
-			      if(httpReqOptions[label][input] === null){
-			   	      throw new Error(`param: ${input} is not of type ${_type.name}; please provide as needed`)
-		  	    }
-		  }
+			if(_input == void 0){
+				if(_required)
+					throw new Error(`param: "${param}" is required but not provided; please provide as needed`)
+			}else{
+		
+				httpReqOptions[label][param] = isTypeOf(_input, _type)
+									? (label === "query"
+										? querystring.escape(_jsonify(_input))
+										: _jsonify(_input))
+									: null
+		
+				if(httpReqOptions[label][param] === null){
+					throw new Error(`param: "${param}" is not of type ${_type.name}; please provided as needed`)
+				}
+			}
+      
+		}
 	}
 
 	inputValues[label] = (label === "body"
