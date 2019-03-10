@@ -25,4 +25,20 @@ module.exports = {
 		route_params: { reference: String }
 	},
 
+
+	 /*
+	 List Transaction
+	 @params: perPage, page, customer, status, from, to, amount
+	*/
+	listTransaction:{
+		method:'GET',
+		path:'/transaction/',
+		send_json: false,
+		params: { perPage : Number, page : Number, customer : Number, status : String, from : Date, to : Date, amount :Number},
+		param_defaults: {  perPage : 50, page : 1, customer : 0, amount : 0 },
+		route_params: null
+	},
+	
+
+
 }
