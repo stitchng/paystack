@@ -39,6 +39,17 @@ module.exports = {
 		route_params: null
 	},
 	
+	 /*
+	 Fetch Transaction
+	 @params: id
+	*/
+	fetchTransaction:{
+		method:'GET',
+		path:'/transaction/{:id}',
+		send_json: false,
+		route_params: { id: Number }
+	},
+
 
 
 }
