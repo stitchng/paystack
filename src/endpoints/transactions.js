@@ -51,5 +51,18 @@ module.exports = {
 	},
 
 
+	 /*
+	 Initialize Transaction
+	 @params: reference, authorization_code, amount,  plan, currency, email, metadata, subaccount, transaction_charge, bearer, invoice_limit, queue
+	*/
+	chargeAuthorization:{
+		method:'POST',
+		path:'/transaction/charge_authorization',
+		send_json: true,
+		params: { reference : String, authorization_code$ : String, amount$ : Number,  plan : String, currency : String, email$ : String, metadata : Object, subaccount : String , transaction_charge : Number, bearer : String, invoice_limit : Number, queue : Boolean },
+		param_defaults: {  amount : 0,  currency : 'NGN', transaction_charge : 0, bearer : 'account' , invoice_limit : 0 },
+		route_params: null
+	},
+
 
 }
