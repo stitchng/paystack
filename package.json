@@ -23,6 +23,12 @@
   ],
   "author": "StitchNG <stitchnig@gmail.com> (https://twitter.com/stitchappn)",
   "license": "MIT",
+  "standard": {
+    "globals": [
+      "describe",
+      "it"
+    ]
+  },
   "dependencies": {
     "got": "^9.3.2",
     "lodash": "^4.17.0"
