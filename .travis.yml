@@ -1,8 +1,9 @@
 language: node_js
 
 node_js:
-  - "8.4.0"
-  - "9.0.0"
+  - node
+  - 8.0.0
+  - 9.0.0
   - 10.0.0
   
 sudo: false
@@ -10,10 +11,11 @@ sudo: false
 install:
   - npm install
   
-script:
-  - npm run test
-  
 cache:
   directories:
     - ~/.npm # cache npm's cache
     - ~/npm # cache latest npm
+
+notifications:
+  email: 
+    - stitchnig@gmail.com

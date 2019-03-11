@@ -125,7 +125,8 @@ const setInputValues = (config, inputs) => {
 				_required = true;
 			}
 			
-			if(_input == void 0){
+			if(_input == void 0
+				|| _input === ""){
 				if(_required)
 					throw new Error(`param: "${param}" is required but not provided; please provide as needed`)
 			}else{

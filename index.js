@@ -66,7 +66,7 @@ Fees.prototype.addFor = function(amountinkobo){
         
         if (amountinkobo > this.flatline) {
             return parseInt(Math.ceil(amountinkobo + this.cap));
-        } elseif (amountinkobo > this.crossover) {
+        } else if (amountinkobo > this.crossover) {
             return parseInt(Math.ceil((amountinkobo + this.additional_charge) / this.chargeDivider));
         } else {
             return parseInt(Math.ceil(amountinkobo / this.chargeDivider));
