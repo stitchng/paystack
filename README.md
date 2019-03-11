@@ -1,6 +1,7 @@
 # Paystack
 
-![Build status](https://travis-ci.org/stitchng/paystacknode-.svg?branch=master)
+[![NPM Version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
 
 A NodeJS Wrapper for [Paystack](https://www.paystack.com)
 
@@ -120,3 +121,9 @@ MIT
 # Contributing
 
 See the [CONTRIBUTING.md](https://github.com/stitchng/paystack/blob/master/CONTRIBUTING.md) file for info
+
+[npm-image]: https://img.shields.io/npm/v/paystack-node.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/paystack-node
+
+[travis-image]: https://img.shields.io/travis/stitchng/paystack/master.svg?style=flat-square
+[travis-url]: https://travis-ci.org/stitchng/paystack

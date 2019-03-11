@@ -163,7 +163,7 @@ const makeMethod = function (config) {
     httpConfig.headers['Content-Type'] = 'x-www-form-urlencoded'
   }
 
-  return function (requestParams) {
+  return function (requestParams = {}) {
     let pathname = config.path
     let payload = false
 
