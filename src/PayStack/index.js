@@ -84,7 +84,7 @@ const setPathName = (config, values) => {
 const _jsonify = (data) => {
   return !data ? 'null'
     : (typeof data === 'object'
-      ? (data instanceof Date ? data.toDateString() : (('toJSON' in data) ? data.toJSON().replace(/T|Z/g, ' ') : JSON.stringify(data)))
+      ? (data instanceof Date ? data.toISOString().replace(/Z$/, '') : (('toJSON' in data) ? data.toJSON().replace(/Z$/, '') : JSON.stringify(data)))
       : String(data))
 }
 
@@ -164,26 +164,27 @@ const makeMethod = function (config) {
   }
 
   return function (requestParams) {
-    let pathname = false
+    let pathname = config.path
     let payload = false
 
     if (!_.isEmpty(requestParams, true)) {
       if (config.params !== null) {
-        pathname = config.path
         payload = setInputValues(config, requestParams)
       }
 
       if (config.route_params !== null) {
         pathname = setPathName(config, requestParams)
-        if (payload === false) {
-          payload = {}
-        }
       }
     } else {
       if (config.params !== null || config.route_params !== null) {
         throw new Error('Argument: [ requestParam(s) ] Not Meant To Be Empty!')
       }
     }
+
+    if (payload === false) {
+      payload = {}
+    }
+
     for (let type in payload) {
       if (payload.hasOwnProperty(type)) {
         httpConfig[type] = JSON.parse(payload[type])
