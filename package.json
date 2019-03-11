@@ -11,7 +11,6 @@
     "test": "test"
   },
   "scripts": {
-    "lint": "./node_modules/standard/bin/cmd.js --fix",
     "test": "mocha"
   },
   "keywords": [

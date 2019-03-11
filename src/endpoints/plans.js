@@ -30,7 +30,7 @@ module.exports = {
       Fetch Plan
       @param: id_or_plan_code
     */
-  fetchPlan: {
+  getPlan: {
     method: 'GET',
     path: '/plan/{:id_or_plan_code}',
     params: null,

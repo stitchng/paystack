@@ -54,7 +54,7 @@ module.exports = {
       Fetch Subscription
       @param: id_or_subscription_code
     */
-  fetchSubscription: {
+  getSubscription: {
     method: 'GET',
     path: '/subscription/{:id_or_subscription_code}',
     params: null,

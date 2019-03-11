@@ -31,7 +31,7 @@ module.exports = {
       Fetch Sub Account
       @param: id_or_slug
     */
-  fetchSubaccount: {
+  getSubaccount: {
     method: 'GET',
     path: '/subaccount/{:id_or_slug}',
     params: null,

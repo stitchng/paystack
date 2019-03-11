@@ -1,6 +1,6 @@
 'use strict'
 
-const PayStack = require('./src/PayStack')
+const PayStack = require('./src/PayStack/index.js')
 
 PayStack.prototype.version = '0.1.0'
 

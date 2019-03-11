@@ -31,7 +31,7 @@ module.exports = {
    Fetch Refund
    @param: reference, currency
   */
-  fetchRefund: {
+  getRefund: {
     method: 'GET',
     path: '/refund/{:reference}',
     send_json: false,

@@ -8,6 +8,7 @@ const customers = require('../endpoints/customers.js')
 const transactions = require('../endpoints/transactions.js')
 const subaccounts = require('../endpoints/subaccounts.js')
 const plans = require('../endpoints/plans.js')
+const pages = require('../endpoints/pages.js')
 const refunds = require('../endpoints/refunds.js')
 const charges = require('../endpoints/charges.js')
 const invoices = require('../endpoints/invoices.js')
@@ -24,6 +25,7 @@ const apiEndpoints = Object.assign(
   transactions,
   subaccounts,
   plans,
+  pages,
   refunds,
   charges,
   invoices,
@@ -178,8 +180,7 @@ const makeMethod = function (config) {
         }
       }
     } else {
-      if (config.params !== null ||
-		config.route_params !== null) {
+      if (config.params !== null || config.route_params !== null) {
         throw new Error('Argument: [ requestParam(s) ] Not Meant To Be Empty!')
       }
     }

@@ -42,7 +42,7 @@ module.exports = {
     Fetch Transaction
     @params: id
   */
-  fetchTransaction: {
+  getTransaction: {
     method: 'GET',
     path: '/transaction/{:id}',
     send_json: false,
