@@ -166,6 +166,10 @@ const makeMethod = function (config) {
   return function (requestParams = {}) {
     let pathname = config.path
     let payload = false
+    
+    if (!(requestParams instanceof Object)) {
+      throw new TypeError('Argument: [ requestParam(s) ] Should Be An Object Literal')
+    }
 
     if (!_.isEmpty(requestParams, true)) {
       if (config.params !== null) {
@@ -177,7 +181,7 @@ const makeMethod = function (config) {
       }
     } else {
       if (config.params !== null || config.route_params !== null) {
-        throw new Error('Argument: [ requestParam(s) ] Not Meant To Be Empty!')
+        throw new TypeError('Argument: [ requestParam(s) ] Not Meant To Be Empty!')
       }
     }
 
