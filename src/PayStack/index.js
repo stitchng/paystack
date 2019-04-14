@@ -17,6 +17,7 @@ const verifications = require('../endpoints/verifications.js')
 const miscellaneous = require('../endpoints/miscellaneous.js')
 const settlements = require('../endpoints/settlements.js')
 const subscriptions = require('../endpoints/subscriptions')
+const controlPanelForSessions = require('../endpoints/control_panel_for_sessions.js')
 
 /* Any param with '$' at the end is a REQUIRED param both for request body param(s)  request route params */
 const apiEndpoints = Object.assign(
@@ -33,7 +34,8 @@ const apiEndpoints = Object.assign(
   verifications,
   miscellaneous,
   settlements,
-  subscriptions
+  subscriptions,
+  controlPanelForSessions
 )
 
 /*!
@@ -152,6 +154,7 @@ const setInputValues = (config, inputs) => {
 const makeMethod = function (config) {
   let httpConfig = {
     headers: {
+      'Cache-Control': 'no-cache',
       'Accept': 'application/json'
     },
     json: true
@@ -166,7 +169,7 @@ const makeMethod = function (config) {
   return function (requestParams = {}) {
     let pathname = config.path
     let payload = false
-    
+
     if (!(requestParams instanceof Object)) {
       throw new TypeError('Argument: [ requestParam(s) ] Should Be An Object Literal')
     }

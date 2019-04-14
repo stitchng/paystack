@@ -13,12 +13,12 @@ module.exports = {
   },
   /*
       Resolve Account Number
-      @param: account_number, bank_code
+      @param: account_number(required), bank_code
     */
   resolveAccountNumber: {
     method: 'GET',
     path: '/bank/resolve',
-    params: { account_number: String, bank_code: String },
+    params: { account_number$: String, bank_code: String },
     route_params: null
   },
 

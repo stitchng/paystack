@@ -25,4 +25,12 @@ describe('PayStack Instance Test(s)', function () {
       should.exist(err)
     }
   })
+
+  it('should throw an error if method is called with any arguments other than an object', function () {
+    try {
+      instance.createInvoice([])
+    } catch (err) {
+      should.exist(err)
+    }
+  })
 })
