@@ -36,19 +36,84 @@ const paystack = new PayStack(APIKEY, environment)
   using `toJSON()` method for date instances/objects
 */
 
-const promise = paystack.getSettlements({
+const promise1 = paystack.getSettlements({
   from:new Date("2017-02-09"), 
   to:new Date()
 })
 
-promise.then(function(response){
+promise1.then(function(response){
   var data = response.body
   
+})
+
+// getCustomer
+
+const promise2 = paystack.getCustomer({
+  customer_id:'CUS_e24m6SqA6g3Jk889o21'
+})
+
+promise2.then(function(response){
+  var data = response.body
+  
+}).catch(function(error){
+  // deal with error
+})
+
+// createCustomer
+
+const promise3 = paystack.createCustomer({
+  email:'malik.onyemah@gmail.com',
+  first_name:'Malik',
+  last_name:'Onyemah',
+  phone:'+2347135548369'
+})
+
+promise3.then(function(response){
+  return response.body
+  
+}).then( body => {
+    return res.status(200).json({id:body.data.id})
+})
+
+// setRiskActionOnCustomer
+
+const promise4 = paystack.setRiskActionOnCustomer({
+  risk_action:'deny',
+  customer_id:'CUS_e24m6SqA6g3Jk889o21'
+}).then(function(response){
+   const result = response.body
+})
+
+// createPage
+
+const promise5 = paystack.createPage({
+  name:'DoorPost Pay',
+  description:'This is payment for every ',
+  amount:30000,
+  slug:'5nApBwZkvR',
+  redirect_url:'https://www.localhost.com/pay/callback',
+  custom_fields: ['phone', 'age']
+})
+
+
+app.use(async function verifications(req, res, next){
+    let responseBVN = await paystack.resolveBVN({
+      bvn:req.body.bvn //'22283643840404'
+    })
+
+    let responseAcctNum = await paystack.resolveAccountNumber({
+      account_number:req.body.acc_num, // '0004644649'
+      bank_code:req.body.bank_code // '075'
+    })
+
+    return next()
 })
 
 ```
 
 ## API Resources
+
+>Each method expects an object literal with both **route parameters** and **request parameters (query / body)**. Please, go through the _src/endpoints_ folder to see the specific items that should make up the object literal for each method
 
 - customers
   - paystack.createCustomer()
@@ -69,6 +134,9 @@ promise.then(function(response){
   - paystack.markInvoiceAsPaid()
 - settlements
   - paystack.getSettlements()
+- payment sessions {control panel}
+  - paystack.getPaymentSessionTimeout()
+  - paystack.updatePaymentSessionTimeout()
 - pages
   - paystack.createPage()
   - paystack.listPages()

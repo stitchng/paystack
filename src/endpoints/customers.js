@@ -3,7 +3,7 @@
 module.exports = {
   /*
     Create customer
-    @params: first_name, last_name, email, phone
+    @params: first_name, last_name, email(required), phone
   */
   createCustomer: {
     method: 'POST',
@@ -38,7 +38,7 @@ module.exports = {
 
   /*
   Update customer
-  @params: first_name, last_name, email (required), phone
+  @params: customer_id, first_name, last_name, email (required), phone
   */
   updateCustomer: {
     method: 'PUT',

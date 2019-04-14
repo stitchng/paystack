@@ -3,7 +3,7 @@
 module.exports = {
   /*
       Initiate Transfer
-      @param: source, reason, amount, recipient, currency, reference
+      @param: source(required), reason, amount(required), recipient(required), currency, reference(required)
     */
   initiateTransfer: {
     method: 'POST',

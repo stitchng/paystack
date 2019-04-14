@@ -3,7 +3,7 @@
 module.exports = {
   /*
   Create Pages
-  @params: name, description, amount, slug, redirect_url, custom_fields
+  @params: name(required), description, amount, slug, redirect_url, custom_fields
   */
   createPage: {
     method: 'POST',
@@ -14,7 +14,7 @@ module.exports = {
   },
   /*
   List Pages
-  @params:
+  @params: perPage, page
   */
   listPages: {
     method: 'GET',
@@ -26,7 +26,7 @@ module.exports = {
   },
   /*
   Fetch Page
-  @params:
+  @params: id_or_slug
   */
   getPage: {
     method: 'GET',
@@ -37,7 +37,7 @@ module.exports = {
   },
   /*
   Update Pages
-  @params: name, description, amount, active
+  @params: id_or_slug, name, description, amount, active
   */
   updatePage: {
     method: 'PUT',

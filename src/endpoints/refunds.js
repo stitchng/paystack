@@ -3,7 +3,7 @@
 module.exports = {
   /*
    Create Refund
-   @param: transaction<reference>, amount, currency, customer_note, merchant_note
+   @param: transaction(reference), amount, currency, customer_note, merchant_note
   */
   createRefund: {
     method: 'POST',
@@ -16,7 +16,7 @@ module.exports = {
 
   /*
    List Refund
-   @param: reference, currency
+   @param: reference(required), currency
   */
   listRefund: {
     method: 'GET',
