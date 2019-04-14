@@ -106,7 +106,7 @@ app.use(async function verifications(req, res, next){
       bank_code:req.body.bank_code // '075'
     })
 
-    return next()
+    await next()
 })
 
 ```
