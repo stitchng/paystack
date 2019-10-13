@@ -9,6 +9,7 @@ const transactions = require('../endpoints/transactions.js')
 const subaccounts = require('../endpoints/subaccounts.js')
 const plans = require('../endpoints/plans.js')
 const pages = require('../endpoints/pages.js')
+const products = require('../endpoints/products.js')
 const refunds = require('../endpoints/refunds.js')
 const charges = require('../endpoints/charges.js')
 const invoices = require('../endpoints/invoices.js')
@@ -19,7 +20,7 @@ const settlements = require('../endpoints/settlements.js')
 const subscriptions = require('../endpoints/subscriptions')
 const controlPanelForSessions = require('../endpoints/control_panel_for_sessions.js')
 
-/* Any param with '$' at the end is a REQUIRED param both for request body param(s)  request route params */
+/* Any param with '$' at the end is a REQUIRED param both for request body param(s) request route params */
 const apiEndpoints = Object.assign(
   {},
   customers,
@@ -27,6 +28,7 @@ const apiEndpoints = Object.assign(
   subaccounts,
   plans,
   pages,
+  products,
   refunds,
   charges,
   invoices,
@@ -162,8 +164,10 @@ const makeMethod = function (config) {
 
   if (config.send_json) {
     httpConfig.headers['Content-Type'] = httpConfig.headers['Accept'] // 'application/json'
+    httpConfig.form = false
   } else if (config.send_form) {
-    httpConfig.headers['Content-Type'] = 'x-www-form-urlencoded'
+    httpConfig.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    httpConfig.form = true
   }
 
   return function (requestParams = {}) {
@@ -194,7 +198,7 @@ const makeMethod = function (config) {
 
     for (let type in payload) {
       if (payload.hasOwnProperty(type)) {
-        httpConfig[type] = JSON.parse(payload[type])
+        httpConfig[type] = (type === 'query') ? payload[type] : JSON.parse(payload[type])
       }
     }
 
@@ -243,10 +247,10 @@ class PayStack {
                 errorMessage = 'Bearer Authorization header may not have been set: Unauthorized (401)'
                 break
               case 404: // Not Found
-                errorMessage = ''
+                errorMessage = 'Request endpoint does not exist: Not Found (404)'
                 break
               case 403: // Forbidden
-                errorMessage = ''
+                errorMessage = 'Request endpoint requires further priviledges to be accessed: Forbidden (403)'
                 break
             }
 

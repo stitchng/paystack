@@ -33,6 +33,7 @@ module.exports = {
     path: '/paymentrequest/{:invoice_id_or_code}',
     send_json: true,
     params: { description: String, line_items: Array, tax: Array, customer: String, due_date: String, metadata: Object, send_notification: Boolean },
+    param_defaults: { send_notification: false },
     route_params: { invoice_id_or_code: String }
   },
 
@@ -45,6 +46,7 @@ module.exports = {
     path: '/paymentrequest',
     send_json: false,
     params: { customer: String, status: String, currency: String, paid: String, include_archive: String },
+    param_defaults: { currency: 'NGN' },
     route_params: null
   },
 
@@ -57,6 +59,7 @@ module.exports = {
     path: '/paymentrequest/verify/{:invoice_code}',
     send_json: true,
     params: null,
+    param_defaults: null,
     route_params: { invoice_code: String }
   },
 
@@ -83,6 +86,7 @@ module.exports = {
     path: '/paymentrequest/totals',
     send_form: true,
     params: null,
+    param_defaults: null,
     route_params: null
   },
 

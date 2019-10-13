@@ -15,7 +15,7 @@ module.exports = {
   },
 
   /*
-      List Sub Account
+      List Sub Accounts
       @param: perPage(50 per page), page
     */
   listSubaccount: {
@@ -34,7 +34,9 @@ module.exports = {
   getSubaccount: {
     method: 'GET',
     path: '/subaccount/{:id_or_slug}',
+    send_json: false,
     params: null,
+    param_defaults: null,
     route_params: { id_or_slug: String }
   },
 

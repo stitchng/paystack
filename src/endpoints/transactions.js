@@ -22,6 +22,8 @@ module.exports = {
     method: 'GET',
     path: '/transaction/verify/{:reference}',
     send_json: false,
+    params: null,
+    param_defaults: null,
     route_params: { reference: String }
   },
 
@@ -31,7 +33,7 @@ module.exports = {
   */
   listTransaction: {
     method: 'GET',
-    path: '/transaction/',
+    path: '/transaction',
     send_json: false,
     params: { perPage: Number, page: Number, customer: Number, status: String, from: Date, to: Date, amount: Number },
     param_defaults: { perPage: 50, page: 1, customer: 0, amount: 0 },
@@ -46,6 +48,8 @@ module.exports = {
     method: 'GET',
     path: '/transaction/{:id}',
     send_json: false,
+    param_defaults: null,
+    params: null,
     route_params: { id: String }
   },
 
@@ -70,6 +74,8 @@ module.exports = {
     method: 'GET',
     path: '/transaction/timeline/{:id}',
     send_json: false,
+    param_defaults: null,
+    params: null,
     route_params: { id: String }
   },
 
@@ -82,6 +88,7 @@ module.exports = {
     path: '/transaction/totals',
     send_json: false,
     params: { from: Date, to: Date },
+    param_defaults: null,
     route_params: null
   },
 

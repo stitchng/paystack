@@ -43,7 +43,8 @@ const promise1 = paystack.getSettlements({
 
 promise1.then(function(response){
   var data = response.body
-  
+}).catch(function (error){
+  // deal with error
 })
 
 // getCustomer
@@ -70,9 +71,8 @@ const promise3 = paystack.createCustomer({
 
 promise3.then(function(response){
   return response.body
-  
 }).then( body => {
-    return res.status(200).json({id:body.data.id})
+  return res.status(200).json({id:body.data.id})
 })
 
 // setRiskActionOnCustomer
@@ -80,8 +80,12 @@ promise3.then(function(response){
 const promise4 = paystack.setRiskActionOnCustomer({
   risk_action:'deny',
   customer_id:'CUS_e24m6SqA6g3Jk889o21'
-}).then(function(response){
+})
+
+promise4.then(function (response){
    const result = response.body
+}).catch(function (error){
+  // deal with error
 })
 
 // createPage
@@ -89,12 +93,59 @@ const promise4 = paystack.setRiskActionOnCustomer({
 const promise5 = paystack.createPage({
   name:'DoorPost Pay',
   description:'This is payment for every ',
-  amount:30000,
+  amount:300000, // Amount in kobo
   slug:'5nApBwZkvR',
   redirect_url:'https://www.localhost.com/pay/callback',
-  custom_fields: ['phone', 'age']
+  custom_fields: ['phone_number', 'age']
 })
 
+promise5.then(function (response){
+ console.log(response.body);
+}).catch(function (error){
+  // deal with error
+})
+
+// initializeTransaction
+
+const promise6 = paystack.initializeTransaction({
+  reference: "7PVGX8MEk85tgeEpVDtD",
+  amount: 500000, // 5,000 Naira (remember you have to pass amount in kobo)
+  email: "seun045olayinka@gmail.com",
+  subaccount: "ACCT_8f4s1eq7ml6rlzj"
+})
+
+promise6.then(function (response){
+  console.log(response.body);
+}).catch(function (error){
+  // deal with error
+})
+
+// verifyTransaction
+
+const promise7 = paystack.verifyTransaction({
+  reference: "7PVGX8MEk85tgeEpVDtD"
+})
+
+promise7.then(function (response){
+ console.log(response.body);
+}).catch(function (error){
+  // deal with error
+})
+
+// listInvoices
+
+const promise8 = paystack.listInvoices({
+  customer: "CUS_je02lbimlqixzax",
+  status: "pending",
+  paid: false,
+  currency: "NGN"
+})
+
+promise8.then(function (response){
+ console.log(response.body);
+}).catch(function (error){
+  // deal with error
+})
 
 app.use(async function verifications(req, res, next){
     let responseBVN = await paystack.resolveBVN({
@@ -106,7 +157,7 @@ app.use(async function verifications(req, res, next){
       bank_code:req.body.bank_code // '075'
     })
 
-    await next()
+    next()
 })
 
 ```
@@ -143,6 +194,11 @@ app.use(async function verifications(req, res, next){
   - paystack.getPage()
   - paystack.updatePage()
   - paystack.checkSlugAvailability()
+- products
+  - paystack.createProduct()
+  - paystack.listProduct()
+  - paystack.getProduct()
+  - paystack.updateProduct()
 - transactions
   - paystack.initializeTransaction()
   - paystack.chargeAuthorization()
@@ -174,6 +230,25 @@ app.use(async function verifications(req, res, next){
   - paystack.getSubaccount()
   - paystack.listSubaccount()
   - paystack.updateSubaccount()
+- verifications
+  - paystack.resolveBVN()
+  - paystack.resolveAccountNumber()
+  - paystack.resolveCardBin()
+  - paystack.resolvePhoneNumber()
+- transfers
+  - paystack.initiateTransfer()
+  - paystack.listTransfers()
+  - paystack.fetchTransfer()
+  - paystack.finalizeTransfer()
+  - paystack.initiateBulkTransfer()
+- charges
+  - paystack.chargeCard()
+  - paystack.chargeBank()
+  - paystack.submitPIN()
+  - paystack.submitOTP()
+  - paystack.submitPhone()
+  - paystack.submitBirthday()
+  - paystack.checkPendingCharge()
 - miscellanous
   - paystack.listBanks()
 
@@ -183,7 +258,7 @@ MIT
 
 # Credits
 
-- [Ifeora Okechukwu <Head Of Technology - Oparand>](https://twitter.com/isocroft)
+- [Ifeora Okechukwu <Software Engineer>](https://twitter.com/isocroft)
 - [Ahmad Abdul-Aziz <Software Engineer>](https://twitter.com/dev_amaz)
 
 # Contributing
@@ -195,3 +270,11 @@ See the [CONTRIBUTING.md](https://github.com/stitchng/paystack/blob/master/CONTR
 
 [travis-image]: https://img.shields.io/travis/stitchng/paystack/master.svg?style=flat-square
 [travis-url]: https://travis-ci.org/stitchng/paystack
+
+## Support 
+
+**Coolcodes** is a non-profit software foundation (collective) created by **Oparand** - parent company of StitchNG, Synergixe based in Abuja, Nigeria. You'll find an overview of all our work and supported open source projects on our [Facebook Page](https://www.facebook.com/coolcodes/).
+
+>Follow us on facebook if you can to get the latest open source software/freeware news and infomation.
+
+Does your business depend on our open projects? Reach out and support us on [Patreon](https://www.patreon.com/coolcodes/). All pledges will be dedicated to allocating workforce on maintenance and new awesome stuff.
