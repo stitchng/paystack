@@ -24,7 +24,7 @@ This project provides an easy-to-use object-oriented API to access endpoints del
 
 let PayStack = require('paystack-node')
 
-let APIKEY = 'sk_test_2hWyQ6HW73jS8p1IkXmSWOlE4y9Inhgyd6g5f2R7'
+let APIKEY = 'sk_live_2hWyQ6HW73jS8p1IkXmSWOlE4y9Inhgyd6g5f2R7'
 const environment = process.env.NODE_ENV
 
 const paystack = new PayStack(APIKEY, environment)
