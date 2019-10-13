@@ -2,7 +2,7 @@
 
 const PayStack = require('./src/PayStack/index.js')
 
-PayStack.prototype.version = '0.1.0'
+PayStack.prototype.version = '0.2.1'
 
 const Fees = function (cap, additionalCharge, percentage, threshold) {
   this.additionalCharge = additionalCharge || Fees.INIT_ADDITIONAL_CHARGE

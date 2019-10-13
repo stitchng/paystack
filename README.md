@@ -29,6 +29,9 @@ const environment = process.env.NODE_ENV
 
 const paystack = new PayStack(APIKEY, environment)
 
+const feesCalculator = new PayStack.Fees();
+const feeCharge = feesCalculator.calculateFor(250000) // 2,500 Naira
+
 /* 
   NOTE: All fields/params that require dates should be set to
   instances of the `Date()` constructor as they will
