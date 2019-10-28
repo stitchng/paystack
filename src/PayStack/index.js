@@ -10,6 +10,7 @@ const subaccounts = require('../endpoints/subaccounts.js')
 const plans = require('../endpoints/plans.js')
 const pages = require('../endpoints/pages.js')
 const products = require('../endpoints/products.js')
+const transferRecipients = require('../endpoints/transfers_recipients.js');
 const refunds = require('../endpoints/refunds.js')
 const charges = require('../endpoints/charges.js')
 const invoices = require('../endpoints/invoices.js')
@@ -20,7 +21,7 @@ const settlements = require('../endpoints/settlements.js')
 const subscriptions = require('../endpoints/subscriptions')
 const controlPanelForSessions = require('../endpoints/control_panel_for_sessions.js')
 
-/* Any param with '$' at the end is a REQUIRED param both for request body param(s) request route params */
+/* Any param with '$' at the end is a REQUIRED param both for request body param(s) and request route params */
 const apiEndpoints = Object.assign(
   {},
   customers,
@@ -37,6 +38,7 @@ const apiEndpoints = Object.assign(
   miscellaneous,
   settlements,
   subscriptions,
+  transferRecipients,
   controlPanelForSessions
 )
 
@@ -100,6 +102,7 @@ const setInputValues = (config, inputs) => {
   switch (config.method) {
     case 'GET':
     case 'HEAD':
+    case 'DELETE':
       label = 'query'
       break
 
