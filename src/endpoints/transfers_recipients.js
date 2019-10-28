@@ -48,6 +48,6 @@ module.exports = {
     send_json: false,
     params: null,
     param_defaults: null,
-    route_params: { recipient_code_or_id: String}
+    route_params: { recipient_code_or_id: String }
   },
 }
