@@ -9,7 +9,7 @@ module.exports = {
     method: 'POST',
     path: '/transferrecipient',
     send_json: true,
-    params: { type: String, name$: String, account_number$: String, bank_code$: String, currency: String, description: String, authorization_code: String },
+    params: { type$: String, name$: String, account_number$: String, bank_code$: String, currency: String, description: String, authorization_code: String },
     param_defaults: { type: 'nuban', currency: 'NGN' },
     route_params: null
   },
