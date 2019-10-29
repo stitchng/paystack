@@ -244,6 +244,11 @@ app.use(async function verifications(req, res, next){
   - paystack.fetchTransfer()
   - paystack.finalizeTransfer()
   - paystack.initiateBulkTransfer()
+- transfer_recipients
+  - paystack.createTransferRecipient()
+  - paystack.listTransferRecipients()
+  - paystack.updateTransferRecipient()
+  - paystack.deleteTransferRecipient()
 - charges
   - paystack.chargeCard()
   - paystack.chargeBank()
