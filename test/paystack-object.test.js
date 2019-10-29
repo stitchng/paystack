@@ -14,6 +14,7 @@ describe('PayStack Instance Test(s)', function () {
     expect((typeof instance.mergeNewOptions === 'function')).to.be.true
     expect((typeof instance.createCustomer === 'function')).to.be.true
     expect((typeof instance.createInvoice === 'function')).to.be.true
+    expect((typeof instance.createProduct === 'function')).to.be.true
     expect((typeof PayStack.Fees === 'function')).to.be.true
     /* eslint-enable no-unused-expressions */
   })

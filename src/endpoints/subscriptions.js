@@ -10,6 +10,7 @@ module.exports = {
     path: '/subscription',
     send_json: true,
     params: { customer$: String, plan$: String, authorization$: String, start_date: Date },
+    param_defaults: null,
     route_params: null
   },
 
@@ -35,6 +36,7 @@ module.exports = {
     path: '/subscription/disable',
     send_json: true,
     params: { code: String, token: String },
+    param_defaults: null,
     route_params: null
   },
 
@@ -47,6 +49,7 @@ module.exports = {
     path: '/subscription/enable',
     send_json: true,
     params: { code: String, token: String },
+    param_defaults: null,
     route_params: null
   },
 
@@ -58,6 +61,7 @@ module.exports = {
     method: 'GET',
     path: '/subscription/{:id_or_subscription_code}',
     params: null,
+    param_defaults: null,
     route_params: { id_or_subscription_code: String }
   }
 

@@ -9,6 +9,7 @@ module.exports = {
     method: 'GET',
     path: '/bank/resolve_bvn/{:bvn}',
     params: null,
+    param_defaults: null,
     route_params: { bvn: String }
   },
   /*
@@ -19,6 +20,7 @@ module.exports = {
     method: 'GET',
     path: '/bank/resolve',
     params: { account_number$: String, bank_code: String },
+    param_defaults: null,
     route_params: null
   },
 
@@ -30,6 +32,7 @@ module.exports = {
     method: 'GET',
     path: '/decision/bin/{:bin}',
     params: null,
+    param_defaults: null,
     route_params: { bin: String }
   },
 

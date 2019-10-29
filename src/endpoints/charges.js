@@ -12,6 +12,7 @@ module.exports = {
     path: '/charge',
     send_json: true,
     params: { card$: Object, metadata: Object, reference: String, amount: Number, email: String },
+    param_defaults: null,
     route_params: null
   },
 
@@ -83,6 +84,7 @@ module.exports = {
     method: 'GET',
     path: '/charge/{:reference}',
     params: null,
+    param_defaults: null,
     route_params: { reference: String }
   }
 }
