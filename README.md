@@ -266,8 +266,8 @@ MIT
 
 # Credits
 
-- [Ifeora Okechukwu <Software Engineer>](https://twitter.com/isocroft)
-- [Ahmad Abdul-Aziz <Software Engineer>](https://twitter.com/dev_amaz)
+- [Ifeora Okechukwu](https://twitter.com/isocroft)
+- [Ahmad Abdul-Aziz](https://twitter.com/dev_amaz)
 
 # Contributing
 

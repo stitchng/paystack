@@ -1,3 +1,9 @@
+<a name="0.2.2"></a>
+# 0.2.2 (2019-23-2019)
+
+### Feature Added
+- Added _Transfer Recipients_ API Endpoint methods by [@adekoyejoakinhanmi](https://github.com/adekoyejoakinhanmi)
+
 <a name="0.2.1"></a>
 # 0.2.1 (2019-10-13)
 
