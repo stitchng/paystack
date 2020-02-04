@@ -22,6 +22,7 @@ module.exports = {
     method: 'GET',
     path: '/plan',
     params: { perPage: Number, page: Number },
+    send_json: false,
     param_defaults: { perPage: 0, page: 0 },
     route_params: null
   },
@@ -34,6 +35,7 @@ module.exports = {
     method: 'GET',
     path: '/plan/{:id_or_plan_code}',
     params: null,
+    send_json: false,
     route_params: { id_or_plan_code: String }
   },
 

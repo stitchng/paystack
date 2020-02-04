@@ -49,5 +49,5 @@ module.exports = {
     params: null,
     param_defaults: null,
     route_params: { recipient_code_or_id: String }
-  },
+  }
 }

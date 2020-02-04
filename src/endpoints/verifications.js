@@ -13,13 +13,25 @@ module.exports = {
     route_params: { bvn: String }
   },
   /*
+      Match Bank Verification Number
+      @param: bvn (required), account_number(required), bank_code (required), first_name, middle_name, last_name
+    */
+  matchBVN: {
+    method: 'POST',
+    path: '/bvn/match',
+    send_json: true,
+    params: { bvn$: String, bank_code$: String, account_number$: String, first_name: String, middle_name: String, last_name: String },
+    param_defaults: null,
+    route_params: null
+  },
+  /*
       Resolve Account Number
-      @param: account_number(required), bank_code
+      @param: account_number(required), bank_code (required)
     */
   resolveAccountNumber: {
     method: 'GET',
     path: '/bank/resolve',
-    params: { account_number$: String, bank_code: String },
+    params: { account_number$: String, bank_code$: String },
     param_defaults: null,
     route_params: null
   },

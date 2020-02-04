@@ -57,7 +57,7 @@ module.exports = {
   verifyInvoice: {
     method: 'GET',
     path: '/paymentrequest/verify/{:invoice_code}',
-    send_json: true,
+    send_json: false,
     params: null,
     param_defaults: null,
     route_params: { invoice_code: String }

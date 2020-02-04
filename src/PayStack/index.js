@@ -5,12 +5,14 @@ const querystring = require('querystring')
 const _ = require('lodash')
 
 const customers = require('../endpoints/customers.js')
+const disputes = require('../endpoints/disputes.js')
 const transactions = require('../endpoints/transactions.js')
 const subaccounts = require('../endpoints/subaccounts.js')
 const plans = require('../endpoints/plans.js')
 const pages = require('../endpoints/pages.js')
 const products = require('../endpoints/products.js')
-const transferRecipients = require('../endpoints/transfers_recipients.js');
+const balanceHistory = require('../endpoints/balance_history.js')
+const transferRecipients = require('../endpoints/transfers_recipients.js')
 const refunds = require('../endpoints/refunds.js')
 const charges = require('../endpoints/charges.js')
 const invoices = require('../endpoints/invoices.js')
@@ -25,11 +27,13 @@ const controlPanelForSessions = require('../endpoints/control_panel_for_sessions
 const apiEndpoints = Object.assign(
   {},
   customers,
+  disputes,
   transactions,
   subaccounts,
   plans,
   pages,
   products,
+  balanceHistory,
   refunds,
   charges,
   invoices,
@@ -67,9 +71,61 @@ _.mixin(function () {
   }
 }())
 
-const isTypeOf = (_value, type) => {
-  let value = Object(_value)
-  return (value instanceof type)
+const isLiteralFalsey = (variable) => {
+  return (variable === '' || variable === false || variable === 0)
+}
+
+const checkTypeName = (target, type) => {
+  let typeName = ''
+  if (isLiteralFalsey(target)) {
+    typeName = (typeof target)
+  } else {
+    typeName = ('' + (target && target.constructor.name))
+  }
+  return !!(typeName.toLowerCase().indexOf(type) + 1)
+}
+
+const isTypeOf = (value, type) => {
+  let result = false
+
+  type = type || []
+
+  if (typeof type === 'object') {
+    if (typeof type.length !== 'number') {
+      return result
+    }
+
+    let bitPiece = 0
+    type = [].slice.call(type)
+
+    type.forEach(_type => {
+      if (typeof _type === 'function') {
+        _type = (_type.name || _type.displayName).toLowerCase()
+      }
+      bitPiece |= (1 * (checkTypeName(value, _type)))
+    })
+
+    result = !!(bitPiece)
+  } else {
+    if (typeof type === 'function') {
+      type = (type.name || type.displayName).toLowerCase()
+    }
+
+    result = checkTypeName(value, type)
+  }
+
+  return result
+}
+
+const isNullOrUndefined = (value) => {
+  return isTypeOf(value, ['undefined', 'null'])
+}
+
+const isNumeric = (value) => {
+  if (isTypeOf(value, ['string', 'number'])) {
+    return isTypeOf(Math.abs(-value), 'number')
+  }
+  return false
 }
 
 const setPathName = (config, values) => {
@@ -78,6 +134,11 @@ const setPathName = (config, values) => {
     string,
     offset) {
     let _value = values[string]
+    if (config.route_params_numeric === true) {
+      if (!isNumeric(_value)) {
+        return null
+      }
+    }
     return isTypeOf(
       _value,
       config.route_params[string]
@@ -88,7 +149,7 @@ const setPathName = (config, values) => {
 }
 
 const _jsonify = (data) => {
-  return !data ? 'null'
+  return isNullOrUndefined(data) ? 'null'
     : (typeof data === 'object'
       ? (data instanceof Date ? data.toISOString().replace(/Z$/, '') : (('toJSON' in data) ? data.toJSON().replace(/Z$/, '') : JSON.stringify(data)))
       : String(data))
@@ -130,7 +191,7 @@ const setInputValues = (config, inputs) => {
         _required = true
       }
 
-      if (_input === void 0 || _input === '' || _input === null) {
+      if (isNullOrUndefined(_input) || _input === '') {
         if (_required) { throw new Error(`param: "${param}" is required but not provided; please provide as needed`) }
       } else {
         httpReqOptions[label][param] = isTypeOf(_input, _type)
@@ -244,21 +305,29 @@ class PayStack {
         ],
         afterResponse: [
           (response, retryWithMergedOptions) => {
-            let errorMessage = null
+            let errorMessage = ''
             switch (response.statusCode) {
+              case 400: // Bad Request
+                errorMessage = 'Request was badly formed | Bad Request (400)'
+                break
               case 401: // Unauthorized
-                errorMessage = 'Bearer Authorization header may not have been set: Unauthorized (401)'
+                errorMessage = 'Bearer Authorization header may not have been set | Unauthorized (401)'
                 break
               case 404: // Not Found
-                errorMessage = 'Request endpoint does not exist: Not Found (404)'
+                errorMessage = 'Request endpoint does not exist | Not Found (404)'
                 break
               case 403: // Forbidden
-                errorMessage = 'Request endpoint requires further priviledges to be accessed: Forbidden (403)'
+                errorMessage = 'Request endpoint requires further priviledges to be accessed | Forbidden (403)'
                 break
             }
 
-            if (errorMessage !== null) {
-              ;// throw new Error(errorMessage)
+            if (response.body && response.body.status === false) {
+              errorMessage += '; ' + response.body.message
+            }
+
+            if (errorMessage !== '') {
+              // console.error('PayStack Error: ', errorMessage);
+              throw new Error(errorMessage)
             }
 
             return response

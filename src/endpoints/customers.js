@@ -20,6 +20,7 @@ module.exports = {
   getCustomer: {
     method: 'GET',
     path: '/customer/{:customer_id}',
+    send_json: false,
     params: null,
     route_params: { customer_id: String }
   },

@@ -13,6 +13,11 @@ describe('PayStack Instance Test(s)', function () {
     /* eslint-disable no-unused-expressions */
     expect((typeof instance.mergeNewOptions === 'function')).to.be.true
     expect((typeof instance.createCustomer === 'function')).to.be.true
+    expect((typeof instance.listDisputes === 'function')).to.be.true
+    expect((typeof instance.addPageProduct === 'function')).to.be.true
+    expect((typeof instance.listBanks === 'function')).to.be.true
+    expect((typeof instance.listCountries === 'function')).to.be.true
+    expect((typeof instance.getBalanceHistory === 'function')).to.be.true
     expect((typeof instance.createInvoice === 'function')).to.be.true
     expect((typeof instance.createProduct === 'function')).to.be.true
     expect((typeof PayStack.Fees === 'function')).to.be.true
