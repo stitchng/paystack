@@ -83,6 +83,7 @@ module.exports = {
   checkPendingCharge: {
     method: 'GET',
     path: '/charge/{:reference}',
+    send_json: false,
     params: null,
     param_defaults: null,
     route_params: { reference: String }

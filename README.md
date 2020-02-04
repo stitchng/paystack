@@ -39,14 +39,45 @@ const feeCharge = feesCalculator.calculateFor(250000) // 2,500 Naira
   using `toJSON()` method for date instances/objects
 */
 
-const promise1 = paystack.getSettlements({
+const promise0 = paystack.getSettlements({
   from:new Date("2017-02-09"), 
   to:new Date()
 })
 
-promise1.then(function(response){
-  var data = response.body
+promise0.then(function(response){
+  var data = response.body.data;
 }).catch(function (error){
+  // deal with error
+})
+
+// listBanks
+
+try {
+  let { body: { status, message, data } } =  await paystack.listBanks({
+    currency: 'NGN'
+  });
+
+  if(status === false){
+    throw new Error(message);
+  }
+}catch(ex){
+  console.error(ex.message);
+}
+
+// addPageProduct
+
+const promise1 = paystack.addPageProduct({
+  id: '0826739',
+  products: [473, 292]
+})
+
+promise1.then(function(response){
+   // Error Handling
+   if(response.body.status === false){
+     console.error(response.body.message);
+   }
+   var data = response.body.data;
+}).catch(function (error) {
   // deal with error
 })
 
@@ -176,6 +207,8 @@ app.use(async function verifications(req, res, next){
   - paystack.updateCustomer()
   - paystack.deactivateAuthOnCustomer()
   - paystack.setRiskActionOnCustomer()
+- disputes
+  - paystack.listDisputes()
 - invoices
   - paystack.createInvoice()
   - paystack.getMetricsForInvoices()
@@ -197,6 +230,7 @@ app.use(async function verifications(req, res, next){
   - paystack.getPage()
   - paystack.updatePage()
   - paystack.checkSlugAvailability()
+  - paystack.addPageProduct()
 - products
   - paystack.createProduct()
   - paystack.listProduct()
@@ -235,6 +269,7 @@ app.use(async function verifications(req, res, next){
   - paystack.updateSubaccount()
 - verifications
   - paystack.resolveBVN()
+  - paystack.matchBVN()
   - paystack.resolveAccountNumber()
   - paystack.resolveCardBin()
   - paystack.resolvePhoneNumber()
@@ -259,6 +294,7 @@ app.use(async function verifications(req, res, next){
   - paystack.checkPendingCharge()
 - miscellanous
   - paystack.listBanks()
+  - paystack.listCountries()
 
 # License
 
@@ -266,8 +302,8 @@ MIT
 
 # Credits
 
-- [Ifeora Okechukwu <Software Engineer>](https://twitter.com/isocroft)
-- [Ahmad Abdul-Aziz <Software Engineer>](https://twitter.com/dev_amaz)
+- [Ifeora Okechukwu](https://twitter.com/isocroft)
+- [Ahmad Abdul-Aziz](https://twitter.com/dev_amaz)
 
 # Contributing
 
