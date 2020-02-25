@@ -3,14 +3,14 @@
 module.exports = {
   /*
     Initialize Transaction
-    @params: reference, callback_url, amount, email, plan, invoice_limit
+    @params: reference, callback_url, amount, email, plan, subaccount, transaction_charge, bearer, channels, invoice_limit, metadata
   */
   initializeTransaction: {
     method: 'POST',
     path: '/transaction/initialize',
     send_json: true,
-    params: { reference: String, callback_url: String, amount$: Number, email$: String, plan: String, invoice_limit: Number, metadata: String },
-    param_defaults: { invoice_limit: 0 },
+    params: { reference: String, callback_url: String, amount$: Number, email$: String, plan: String, subaccount: String, transaction_charge: Number, bearer: String, channels: Array, invoice_limit: Number, metadata: String },
+    param_defaults: { invoice_limit: 0, bearer: 'account' },
     route_params: null
   },
 
@@ -36,7 +36,7 @@ module.exports = {
     path: '/transaction',
     send_json: false,
     params: { perPage: Number, page: Number, customer: Number, status: String, from: Date, to: Date, amount: Number },
-    param_defaults: { perPage: 50, page: 1, customer: 0, amount: 0 },
+    param_defaults: { perPage: 50, page: 1 },
     route_params: null
   },
 
@@ -55,14 +55,14 @@ module.exports = {
 
   /*
     Charge Authorization
-    @params: reference, authorization_code, amount,  plan, currency, email, metadata, subaccount, transaction_charge, bearer, invoice_limit, queue
+    @params: reference, authorization_code, amount,  plan, currency, email, metadata, subaccount, transaction_charge, bearer, invoice_limit
   */
   chargeAuthorization: {
     method: 'POST',
     path: '/transaction/charge_authorization',
     send_json: true,
-    params: { reference: String, authorization_code$: String, amount$: Number, plan: String, currency: String, email$: String, metadata: Object, subaccount: String, transaction_charge: Number, bearer: String, invoice_limit: Number, queue: Boolean },
-    param_defaults: { amount: 0, currency: 'NGN', transaction_charge: 0, bearer: 'account', invoice_limit: 0 },
+    params: { reference: String, authorization_code$: String, amount$: Number, plan: String, currency: String, email$: String, metadata: Object, subaccount: String, transaction_charge: Number, bearer: String, invoice_limit: Number },
+    param_defaults: { amount: 0, currency: 'NGN', bearer: 'account', invoice_limit: 0 },
     route_params: null
   },
 
@@ -101,7 +101,7 @@ module.exports = {
     path: '/transaction/export',
     send_json: false,
     params: { from: Date, to: Date, settled: Boolean, payment_page: Number, customer: Number, currency: String, settlement: Number, amount: Number, status: String },
-    param_defaults: { payment_page: 0, customer: 0, settlement: 0, amount: 0, status: 'success' },
+    param_defaults: { status: 'success' },
     route_params: null
   },
 
@@ -120,14 +120,27 @@ module.exports = {
 
   /*
     Check Authorization
-    @params: from, to, settled, payment_page, customer, currency, settlement, amount,  status
+    @params: authorization_code, currency, email, amount
   */
   checkAuthorization: {
     method: 'POST',
     path: '/transaction/check_authorization',
     send_json: true,
     params: { authorization_code$: String, amount$: Number, email$: String, currency: String },
-    param_defaults: { amount: 0, currency: 'NGN' },
+    param_defaults: { currency: 'NGN' },
+    route_params: null
+  },
+  
+  /*
+    Partial Debit
+    @params: authorization_code, currency, email, amount, at_least, reference
+  */
+  partialDebit: {
+    method: 'POST',
+    path: '/transaction/partial_debit',
+    send_json: true,
+    params: { authorization_code$: String, amount$: Number, email$: String, currency$: String, at_least: Number, reference: String },
+    param_defaults: { currency: 'NGN' },
     route_params: null
   }
 
