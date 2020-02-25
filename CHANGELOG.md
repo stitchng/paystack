@@ -1,3 +1,9 @@
+<a name="0.2.4"></a>
+# 0.2.4 (2020-02-25)
+
+### Bug Fixes
+- Fixed outdated endpoints by [@navicstein](https://github.com/navicstein)
+
 <a name="0.2.3"></a>
 # 0.2.3 (2020-02-04)
 

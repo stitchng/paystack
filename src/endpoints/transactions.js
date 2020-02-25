@@ -130,7 +130,7 @@ module.exports = {
     param_defaults: { currency: 'NGN' },
     route_params: null
   },
-  
+
   /*
     Partial Debit
     @params: authorization_code, currency, email, amount, at_least, reference
