@@ -133,7 +133,7 @@ const setPathName = (config, values) => {
     match,
     string,
     offset) {
-    let _value = values[string] || (isTypeOf(config.alternate_route_params_keymap, 'object') ? config.alternate_route_params_keymap[string] : false)
+    let _value = values[string] || (isTypeOf(config.alternate_route_params_keymap, 'object') ? values[config.alternate_route_params_keymap[string]] : false)
     if (config.route_params_numeric === true) {
       if (!isNumeric(_value)) {
         return null
