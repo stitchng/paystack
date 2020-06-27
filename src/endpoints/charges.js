@@ -11,7 +11,7 @@ module.exports = {
     method: 'POST',
     path: '/charge',
     send_json: true,
-    params: { card$: Object, metadata: Object, reference: String, amount: Number, email: String },
+    params: { card$: Object, metadata: Object, reference: String, ussd: Object, pin: String, authorization_code: String, mobile_money: Object, device_id: String, amount$: String, email$: String },
     param_defaults: null,
     route_params: null
   },
@@ -24,7 +24,7 @@ module.exports = {
     method: 'POST',
     path: '/charge',
     send_json: true,
-    params: { bank$: Object, metadata: Object, reference: String, amount: Number, email: String },
+    params: { bank$: Object, metadata: Object, reference: String, ussd: Object, pin: String, authorization_code: String, mobile_money: Object, device_id: String, amount$: String, email$: String },
     route_params: null
   },
 
