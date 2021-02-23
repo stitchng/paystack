@@ -135,7 +135,7 @@ const setPathName = (config, values) => {
     match,
     string,
     offset) {
-    let _value = values[string]
+    let _value = values[string] || (isTypeOf(config.alternate_route_params_keymap, 'object') ? values[config.alternate_route_params_keymap[string]] : false)
     if (config.route_params_numeric === true) {
       if (!isNumeric(_value)) {
         return null
@@ -143,7 +143,7 @@ const setPathName = (config, values) => {
     }
     return isTypeOf(
       _value,
-      config.route_params[string]
+      (config.route_params[string] || String)
     )
       ? _value
       : null
@@ -203,7 +203,7 @@ const setInputValues = (config, inputs) => {
           : null
 
         if (httpReqOptions[label][param] === null) {
-          throw new Error(`param: "${param}" is not of type ${_type.name}; please provided as needed`)
+          throw new Error(`param: "${param}" is not of type ${_type.name || _type}; please provided as needed`)
         }
       }
     }

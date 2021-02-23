@@ -247,6 +247,7 @@ app.use(async function verifications(req, res, next){
   - paystack.requestReauthorization()
   - paystack.checkAuthorization()
   - paystack.verifyTransaction()
+  - paystack.partialDebit()
 - plans
   - paystack.createPlan()
   - paystack.getPlan()

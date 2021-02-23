@@ -9,7 +9,7 @@ module.exports = {
     method: 'POST',
     path: '/customer',
     send_json: true,
-    params: { first_name: String, last_name: String, email$: String, phone: String },
+    params: { first_name: String, last_name: String, email$: String, phone: String, metadata: Object },
     route_params: null
   },
 
@@ -19,10 +19,11 @@ module.exports = {
   */
   getCustomer: {
     method: 'GET',
-    path: '/customer/{:customer_id}',
+    alternate_route_params_keymap: { email_or_id_or_customer_code: 'customer_id' },
+    path: '/customer/{:email_or_id_or_customer_code}',
     send_json: false,
     params: null,
-    route_params: { customer_id: String }
+    route_params: { email_or_id_or_customer_code: String }
   },
 
   /*
@@ -39,14 +40,15 @@ module.exports = {
 
   /*
   Update customer
-  @params: customer_id, first_name, last_name, email (required), phone
+  @params: id_or_customer_code, first_name, last_name, email (required), phone
   */
   updateCustomer: {
     method: 'PUT',
-    path: '/customer/{:customer_id}',
+    alternate_route_params_keymap: { id_or_customer_code: 'customer_id' },
+    path: '/customer/{:id_or_customer_code}',
     send_json: true,
-    params: { first_name: String, last_name: String, email$: String, phone: String },
-    route_params: { customer_id: String }
+    params: { first_name: String, last_name: String, email$: String, phone: String, metadata: Object },
+    route_params: { id_or_customer_code: String }
   },
 
   /*
@@ -63,7 +65,7 @@ module.exports = {
 
   /*
     White/Blacklist Customer
-    @params: customer_id (required), risk_action
+    @params: customer (required), risk_action
 
     @info: [ 'allow' to whitelist or 'deny' to blacklist ]
   */
@@ -71,7 +73,7 @@ module.exports = {
     method: 'POST',
     path: '/customer/set_risk_action',
     send_json: true,
-    params: { customer_id$: String, risk_action: String },
+    params: { customer$: String, risk_action: String },
     param_defaults: { risk_action: 'allow' },
     route_params: null
   }

@@ -1,3 +1,16 @@
+<a name="0.2.5"></a>
+# 0.2.5 (2020-07-18)
+
+### Bug Fixes
+- Fixed outdated endpoints issue raised by [@Tetranyble](https://github.com/Tetranyble)
+- Fixed errors on **chargeCard()** Endpoint method
+
+<a name="0.2.4"></a>
+# 0.2.4 (2020-02-25)
+
+### Bug Fixes
+- Fixed outdated endpoints issue raised by [@navicstein](https://github.com/navicstein)
+
 <a name="0.2.3"></a>
 # 0.2.3 (2020-02-04)
 
