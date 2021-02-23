@@ -23,6 +23,8 @@ const settlements = require('../endpoints/settlements.js')
 const subscriptions = require('../endpoints/subscriptions')
 const controlPanelForSessions = require('../endpoints/control_panel_for_sessions.js')
 
+const payStackMockFactory = require('./MockFactory')
+
 /* Any param with '$' at the end is a REQUIRED param both for request body param(s) and request route params */
 const apiEndpoints = Object.assign(
   {},
@@ -217,7 +219,7 @@ const setInputValues = (config, inputs) => {
   return inputValues
 }
 
-const makeMethod = function (config) {
+const makeMethod = function (config, methodName) {
   let httpConfig = {
     headers: {
       'Cache-Control': 'no-cache',
@@ -239,7 +241,9 @@ const makeMethod = function (config) {
     let payload = false
 
     if (!(requestParams instanceof Object)) {
-      throw new TypeError('Argument: [ requestParam(s) ] Should Be An Object Literal')
+      throw new TypeError(
+        'Argument: [ requestParam(s) ] Should Be An Object Literal'
+      )
     }
 
     if (!_.isEmpty(requestParams, true)) {
@@ -252,7 +256,9 @@ const makeMethod = function (config) {
       }
     } else {
       if (config.params !== null || config.route_params !== null) {
-        throw new TypeError('Argument: [ requestParam(s) ] Not Meant To Be Empty!')
+        throw new TypeError(
+          'Argument: [ requestParam(s) ] Not Meant To Be Empty!'
+        )
       }
     }
 
@@ -260,84 +266,161 @@ const makeMethod = function (config) {
       payload = {}
     }
 
+    let reqBodyTag = 'body'
+
     for (let type in payload) {
       if (payload.hasOwnProperty(type)) {
-        httpConfig[type] = (type === 'query') ? payload[type] : JSON.parse(payload[type])
+        httpConfig[type] = (type === 'query') 
+          ? payload[type] 
+          : JSON.parse(payload[type])
+        reqBodyTag = type
+        break
       }
     }
 
     let reqVerb = config.method.toLowerCase()
 
+    const reqBody = httpConfig[reqBodyTag] || {}
+    const canInvokeTestingMock = (
+      this._mock !== null 
+      && typeof this._mock[methodName] === 'function'
+    )
+
+    if (canInvokeTestingMock) {
+      delete httpConfig[reqBodyTag]
+
+      if (methodName !== 'chargeBank' 
+          && methodName !== 'chargeCard') {
+        return this._mock[methodName](
+          Object.assign(
+            httpConfig, 
+            { 'method': config.method }
+          ), reqBody)
+      } else if (isTypeOf(reqBody.card, Object) 
+                 || isTypeOf(reqBody.bank, Object)) {
+        const { cvv, expiry_month, expiry_year } = reqBody.card
+        const { code, account_number } = reqBody.bank
+        
+        // Visa OR Verve
+        const isTestCardPan = /^408408(4084084081|0000000409|0000005408)$/.test(reqBody.card.number)
+        const isTestCardCVV = "408" === String(cvv);
+        const isTestCardExpiry = "02" === String(expiry_month) && "22" === String(expiry_year);
+        const isTestCard = (isTestCardPan && isTestCardCVV && isTestCardExpiry)
+        
+        // Zenith Bank OR First Bank
+        const isTestBankCode = /^(?:057|011)$/.test(String(code))
+        const isTestBankAccount = "0000000000" === account_number
+        const isTestBank = (isTestBankCode && isTestBankAccount)
+        
+        if (!isTestCard || !isTestBank) {
+          return this._mock[methodName](
+            Object.assign(
+              httpConfig, 
+              { 'method': config.method }
+            ), reqBody)
+        }
+      }
+    } 
     return this.httpBaseClient[reqVerb](pathname, httpConfig)
   }
 }
 
 class PayStack {
+  get httpClientBaseOptions () {
+    return {
+          headers: { },
+          hooks: {
+            beforeResponse: [
+              async options => {
+                // console.log(options)
+              }
+            ],
+            onError: [
+              error => {
+                const { response } = error
+                if (response && response.body) {
+                  error.name = 'PayStackError'
+                  error.message = `${response.body.message} (${error.statusCode})`
+                }
+
+                return error
+              }
+            ],
+            afterResponse: [
+              (response, retryWithMergedOptions) => {
+                let errorMessage = ''
+                switch (response.statusCode) {
+                  case 400: // Bad Request
+                    errorMessage = 'Request was badly formed | Bad Request (400)'
+                    break
+                  case 401: // Unauthorized
+                    errorMessage = 'Bearer Authorization header may not have been set | Unauthorized (401)'
+                    break
+                  case 404: // Not Found
+                    errorMessage = 'Request endpoint does not exist | Not Found (404)'
+                    break
+                  case 403: // Forbidden
+                    errorMessage = 'Request endpoint requires further priviledges to be accessed | Forbidden (403)'
+                    break
+                }
+
+                if (response.body && response.body.status === false) {
+                  errorMessage += '; {' + response.body.message + '}'
+                }
+
+                if (errorMessage !== '') {
+                  const error = new Error(errorMessage);
+                  if (response._isMocked) {
+                     error.response = response;
+                  }
+                  error.name = 'PayStackAPIError';
+                  throw error;
+                }
+
+                return response
+              }
+            ]
+          },
+          mutableDefaults: false
+    }
+  }
+
+  static engageMock () {
+    this.prototype._mock = payStackMockFactory.make(
+      this.prototype.httpClientBaseOptions.hooks,
+      Object.keys(apiEndpoints)
+    )
+  }
+
+  static disengageMock () {
+    this.prototype._mock = null
+  }
+
+  static mockMacro (methodName, methodRoutine) {
+    if (typeof this.prototype[methodName] !== 'function') {
+      throw new Error('Cannot monkey-patch non-existing methods');
+    }
+
+    if (typeof methodRoutine !== 'function') {
+      throw new Error('Second argument MUST be a function');
+    }
+    return (this.prototype._mock[methodName] = methodRoutine)
+  }
+
   constructor (apiKey, appEnv = 'development') {
     const environment = /^(?:development|local|dev)$/
 
-    this.api_base = {
+    const api_base = {
       sandbox: 'https://api.paystack.co',
       live: 'https://api.paystack.co'
     }
-
-    this.httpClientBaseOptions = {
-      baseUrl: environment.test(appEnv) ? this.api_base.sandbox : this.api_base.live,
-      headers: {
-        'Authorization': `Bearer ${apiKey}`
-      },
-      hooks: {
-        beforeResponse: [
-          async options => {
-            // console.log(options)
-          }
-        ],
-        onError: [
-          error => {
-            const { response } = error
-            if (response && response.body) {
-              error.name = 'PayStackError'
-              error.message = `${response.body.message} (${error.statusCode})`
-            }
-
-            return error
-          }
-        ],
-        afterResponse: [
-          (response, retryWithMergedOptions) => {
-            let errorMessage = ''
-            switch (response.statusCode) {
-              case 400: // Bad Request
-                errorMessage = 'Request was badly formed | Bad Request (400)'
-                break
-              case 401: // Unauthorized
-                errorMessage = 'Bearer Authorization header may not have been set | Unauthorized (401)'
-                break
-              case 404: // Not Found
-                errorMessage = 'Request endpoint does not exist | Not Found (404)'
-                break
-              case 403: // Forbidden
-                errorMessage = 'Request endpoint requires further priviledges to be accessed | Forbidden (403)'
-                break
-            }
-
-            if (response.body && response.body.status === false) {
-              errorMessage += '; ' + response.body.message
-            }
-
-            if (errorMessage !== '') {
-              // console.error('PayStack Error: ', errorMessage);
-              throw new Error(errorMessage)
-            }
-
-            return response
-          }
-        ]
-      },
-      mutableDefaults: false
-    }
-
-    this.httpBaseClient = got.extend(this.httpClientBaseOptions)
+    
+    const clientOptions = this.httpClientBaseOptions
+    
+    clientOptions.baseUrl = environment.test(appEnv) ? this.api_base.sandbox : this.api_base.live
+    clientOptions.headers['Authorization'] = `Bearer ${apiKey}`
+    
+    this.httpBaseClient = got.extend(clientOptions)
   }
 
   mergeNewOptions (newOptions) {
@@ -347,9 +430,11 @@ class PayStack {
   }
 }
 
+PayStack.prototype._mock = null
+
 for (let methodName in apiEndpoints) {
   if (apiEndpoints.hasOwnProperty(methodName)) {
-    PayStack.prototype[methodName] = makeMethod(apiEndpoints[methodName])
+    PayStack.prototype[methodName] = makeMethod(apiEndpoints[methodName], methodName)
   }
 }
 
