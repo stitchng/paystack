@@ -300,24 +300,25 @@ const makeMethod = function (config, methodName) {
                  || isTypeOf(reqBody.bank, Object)) {
         const { cvv, expiry_month, expiry_year } = reqBody.card
         const { code, account_number } = reqBody.bank
-        
+
         // Visa OR Verve
         const isTestCardPan = /^408408(4084084081|0000000409|0000005408)$/.test(reqBody.card.number)
         const isTestCardCVV = "408" === String(cvv);
         const isTestCardExpiry = "02" === String(expiry_month) && "22" === String(expiry_year);
         const isTestCard = (isTestCardPan && isTestCardCVV && isTestCardExpiry)
-        
+
         // Zenith Bank OR First Bank
         const isTestBankCode = /^(?:057|011)$/.test(String(code))
         const isTestBankAccount = "0000000000" === account_number
         const isTestBank = (isTestBankCode && isTestBankAccount)
-        
+
         if (!isTestCard || !isTestBank) {
           return this._mock[methodName](
             Object.assign(
               httpConfig, 
               { 'method': config.method }
-            ), reqBody)
+            ), reqBody
+          )
         }
       }
     } 
@@ -328,60 +329,60 @@ const makeMethod = function (config, methodName) {
 class PayStack {
   get httpClientBaseOptions () {
     return {
-          headers: { },
-          hooks: {
-            beforeResponse: [
-              async options => {
-                // console.log(options)
+      headers: { },
+      hooks: {
+        beforeResponse: [
+          async options => {
+            // console.log(options)
+          }
+        ],
+        onError: [
+          error => {
+            const { response } = error
+            if (response && response.body) {
+              error.name = 'PayStackError'
+              error.message = `${response.body.message} (${error.statusCode})`
+            }
+
+            return error
+          }
+        ],
+        afterResponse: [
+          (response, retryWithMergedOptions) => {
+            let errorMessage = ''
+            switch (response.statusCode) {
+              case 400: // Bad Request
+                errorMessage = 'Request was badly formed | Bad Request (400)'
+                break
+              case 401: // Unauthorized
+                errorMessage = 'Bearer Authorization header may not have been set | Unauthorized (401)'
+                break
+              case 404: // Not Found
+                errorMessage = 'Request endpoint does not exist | Not Found (404)'
+                break
+              case 403: // Forbidden
+                errorMessage = 'Request endpoint requires further priviledges to be accessed | Forbidden (403)'
+                break
+            }
+
+            if (response.body && response.body.status === false) {
+              errorMessage += '; {' + response.body.message + '}'
+            }
+
+            if (errorMessage !== '') {
+              const error = new Error(errorMessage);
+              if (response._isMocked) {
+                 error.response = response;
               }
-            ],
-            onError: [
-              error => {
-                const { response } = error
-                if (response && response.body) {
-                  error.name = 'PayStackError'
-                  error.message = `${response.body.message} (${error.statusCode})`
-                }
+              error.name = 'PayStackAPIError';
+              throw error;
+            }
 
-                return error
-              }
-            ],
-            afterResponse: [
-              (response, retryWithMergedOptions) => {
-                let errorMessage = ''
-                switch (response.statusCode) {
-                  case 400: // Bad Request
-                    errorMessage = 'Request was badly formed | Bad Request (400)'
-                    break
-                  case 401: // Unauthorized
-                    errorMessage = 'Bearer Authorization header may not have been set | Unauthorized (401)'
-                    break
-                  case 404: // Not Found
-                    errorMessage = 'Request endpoint does not exist | Not Found (404)'
-                    break
-                  case 403: // Forbidden
-                    errorMessage = 'Request endpoint requires further priviledges to be accessed | Forbidden (403)'
-                    break
-                }
-
-                if (response.body && response.body.status === false) {
-                  errorMessage += '; {' + response.body.message + '}'
-                }
-
-                if (errorMessage !== '') {
-                  const error = new Error(errorMessage);
-                  if (response._isMocked) {
-                     error.response = response;
-                  }
-                  error.name = 'PayStackAPIError';
-                  throw error;
-                }
-
-                return response
-              }
-            ]
-          },
-          mutableDefaults: false
+            return response
+          }
+        ]
+      },
+      mutableDefaults: false
     }
   }
 
@@ -414,12 +415,12 @@ class PayStack {
       sandbox: 'https://api.paystack.co',
       live: 'https://api.paystack.co'
     }
-    
+
     const clientOptions = this.httpClientBaseOptions
-    
+
     clientOptions.baseUrl = environment.test(appEnv) ? this.api_base.sandbox : this.api_base.live
     clientOptions.headers['Authorization'] = `Bearer ${apiKey}`
-    
+
     this.httpBaseClient = got.extend(clientOptions)
   }
 
