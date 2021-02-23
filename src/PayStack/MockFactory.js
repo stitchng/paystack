@@ -1,7 +1,7 @@
 module.exports = {
-   make: function (hooks = {}, methods = []) {
-      return {
-      
-      }
-   }
+  make: function (hooks = {}, methods = []) {
+    return {
+
+    }
+  }
 }
