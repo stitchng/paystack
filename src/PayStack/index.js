@@ -23,7 +23,7 @@ const settlements = require('../endpoints/settlements.js')
 const subscriptions = require('../endpoints/subscriptions.js')
 const controlPanelForSessions = require('../endpoints/control_panel_for_sessions.js')
 
-const Mockable = require('./extensions/Mockable.js')
+const Mockable = require('./extension/Mockable.js')
 
 /* Any param with '$' at the end is a REQUIRED param both for request body param(s) and request route params */
 const apiEndpoints = Object.assign(
