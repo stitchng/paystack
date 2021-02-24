@@ -6,7 +6,9 @@ class Mockable {
   static engageMock () {
     this.prototype._mock = payStackMockFactory.make(
       this.prototype.httpClientBaseOptions.hooks,
-      Object.keys(this.prototype)
+      Object.keys(this.prototype).filter(
+        prop => (prop !== '_mock' || prop !== 'httpClientBaseOptions')
+      )
     )
   }
 
