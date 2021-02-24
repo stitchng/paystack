@@ -20,10 +20,10 @@ const transfers = require('../endpoints/transfers.js')
 const verifications = require('../endpoints/verifications.js')
 const miscellaneous = require('../endpoints/miscellaneous.js')
 const settlements = require('../endpoints/settlements.js')
-const subscriptions = require('../endpoints/subscriptions')
+const subscriptions = require('../endpoints/subscriptions.js')
 const controlPanelForSessions = require('../endpoints/control_panel_for_sessions.js')
 
-const payStackMockFactory = require('./MockFactory')
+const Mockable = require('./extensions/Mockable.js')
 
 /* Any param with '$' at the end is a REQUIRED param both for request body param(s) and request route params */
 const apiEndpoints = Object.assign(
@@ -326,7 +326,7 @@ const makeMethod = function (config, methodName) {
   }
 }
 
-class PayStack {
+class PayStack extends Mockable {
   get httpClientBaseOptions () {
     return {
       headers: { },
@@ -386,28 +386,6 @@ class PayStack {
     }
   }
 
-  static engageMock () {
-    this.prototype._mock = payStackMockFactory.make(
-      this.prototype.httpClientBaseOptions.hooks,
-      Object.keys(apiEndpoints)
-    )
-  }
-
-  static disengageMock () {
-    this.prototype._mock = null
-  }
-
-  static mockMacro (methodName, methodRoutine) {
-    if (typeof this.prototype[methodName] !== 'function') {
-      throw new Error('Cannot monkey-patch non-existing methods');
-    }
-
-    if (typeof methodRoutine !== 'function') {
-      throw new Error('Second argument MUST be a function');
-    }
-    return (this.prototype._mock[methodName] = methodRoutine)
-  }
-
   constructor (apiKey, appEnv = 'development') {
     const environment = /^(?:development|local|dev)$/
 
@@ -430,8 +408,6 @@ class PayStack {
     )
   }
 }
-
-PayStack.prototype._mock = null
 
 for (let methodName in apiEndpoints) {
   if (apiEndpoints.hasOwnProperty(methodName)) {
