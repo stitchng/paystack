@@ -7,7 +7,7 @@ module.exports = {
         setTimeout(function timeoutCallback (data) {
           if (that._respondWithError) {
             const err = new Error('Paystack Erro: ');
-            err.response = { status: false, message: 'error on request to paystack' }
+            err.response = { body: { status: false, message: 'error on request to paystack' } }
             return rj(hooks.onError(
               err
             ))
