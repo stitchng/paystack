@@ -20,8 +20,10 @@ const transfers = require('../endpoints/transfers.js')
 const verifications = require('../endpoints/verifications.js')
 const miscellaneous = require('../endpoints/miscellaneous.js')
 const settlements = require('../endpoints/settlements.js')
-const subscriptions = require('../endpoints/subscriptions')
+const subscriptions = require('../endpoints/subscriptions.js')
 const controlPanelForSessions = require('../endpoints/control_panel_for_sessions.js')
+
+const Mockable = require('./extension/Mockable.js')
 
 /* Any param with '$' at the end is a REQUIRED param both for request body param(s) and request route params */
 const apiEndpoints = Object.assign(
@@ -217,7 +219,7 @@ const setInputValues = (config, inputs) => {
   return inputValues
 }
 
-const makeMethod = function (config) {
+const makeMethod = function (config, methodName) {
   let httpConfig = {
     headers: {
       'Cache-Control': 'no-cache',
@@ -239,7 +241,9 @@ const makeMethod = function (config) {
     let payload = false
 
     if (!(requestParams instanceof Object)) {
-      throw new TypeError('Argument: [ requestParam(s) ] Should Be An Object Literal')
+      throw new TypeError(
+        'Argument: [ requestParam(s) ] Should Be An Object Literal'
+      )
     }
 
     if (!_.isEmpty(requestParams, true)) {
@@ -252,7 +256,9 @@ const makeMethod = function (config) {
       }
     } else {
       if (config.params !== null || config.route_params !== null) {
-        throw new TypeError('Argument: [ requestParam(s) ] Not Meant To Be Empty!')
+        throw new TypeError(
+          'Argument: [ requestParam(s) ] Not Meant To Be Empty!'
+        )
       }
     }
 
@@ -260,32 +266,70 @@ const makeMethod = function (config) {
       payload = {}
     }
 
+    let reqBodyTag = 'body'
+
     for (let type in payload) {
       if (payload.hasOwnProperty(type)) {
-        httpConfig[type] = (type === 'query') ? payload[type] : JSON.parse(payload[type])
+        httpConfig[type] = (type === 'query') 
+          ? payload[type] 
+          : JSON.parse(payload[type])
+        reqBodyTag = type
+        break
       }
     }
 
     let reqVerb = config.method.toLowerCase()
 
+    const reqBody = httpConfig[reqBodyTag] || {}
+    const canInvokeTestingMock = (
+      this._mock !== null 
+      && typeof this._mock[methodName] === 'function'
+    )
+
+    if (canInvokeTestingMock) {
+      delete httpConfig[reqBodyTag]
+
+      if (methodName !== 'chargeBank' 
+          && methodName !== 'chargeCard') {
+        return this._mock[methodName](
+          Object.assign(
+            httpConfig, 
+            { 'method': config.method }
+          ), reqBody)
+      } else if (isTypeOf(reqBody.card, Object) 
+                 || isTypeOf(reqBody.bank, Object)) {
+        const { cvv, expiry_month, expiry_year } = reqBody.card
+        const { code, account_number } = reqBody.bank
+
+        // Visa OR Verve
+        const isTestCardPan = /^408408(4084084081|0000000409|0000005408)$/.test(reqBody.card.number)
+        const isTestCardCVV = "408" === String(cvv);
+        const isTestCardExpiry = "02" === String(expiry_month) && "22" === String(expiry_year);
+        const isTestCard = (isTestCardPan && isTestCardCVV && isTestCardExpiry)
+
+        // Zenith Bank OR First Bank
+        const isTestBankCode = /^(?:057|011)$/.test(String(code))
+        const isTestBankAccount = "0000000000" === account_number
+        const isTestBank = (isTestBankCode && isTestBankAccount)
+
+        if (!isTestCard || !isTestBank) {
+          return this._mock[methodName](
+            Object.assign(
+              httpConfig, 
+              { 'method': config.method }
+            ), reqBody
+          )
+        }
+      }
+    } 
     return this.httpBaseClient[reqVerb](pathname, httpConfig)
   }
 }
 
-class PayStack {
-  constructor (apiKey, appEnv = 'development') {
-    const environment = /^(?:development|local|dev)$/
-
-    this.api_base = {
-      sandbox: 'https://api.paystack.co',
-      live: 'https://api.paystack.co'
-    }
-
-    this.httpClientBaseOptions = {
-      baseUrl: environment.test(appEnv) ? this.api_base.sandbox : this.api_base.live,
-      headers: {
-        'Authorization': `Bearer ${apiKey}`
-      },
+class PayStack extends Mockable {
+  get httpClientBaseOptions () {
+    return {
+      headers: { },
       hooks: {
         beforeResponse: [
           async options => {
@@ -322,12 +366,16 @@ class PayStack {
             }
 
             if (response.body && response.body.status === false) {
-              errorMessage += '; ' + response.body.message
+              errorMessage += '; {' + response.body.message + '}'
             }
 
             if (errorMessage !== '') {
-              // console.error('PayStack Error: ', errorMessage);
-              throw new Error(errorMessage)
+              const error = new Error(errorMessage);
+              if (response._isMocked) {
+                 error.response = response;
+              }
+              error.name = 'PayStackAPIError';
+              throw error;
             }
 
             return response
@@ -336,8 +384,22 @@ class PayStack {
       },
       mutableDefaults: false
     }
+  }
 
-    this.httpBaseClient = got.extend(this.httpClientBaseOptions)
+  constructor (apiKey, appEnv = 'development') {
+    const environment = /^(?:development|local|dev)$/
+
+    const api_base = {
+      sandbox: 'https://api.paystack.co',
+      live: 'https://api.paystack.co'
+    }
+
+    const clientOptions = this.httpClientBaseOptions
+
+    clientOptions.baseUrl = environment.test(appEnv) ? this.api_base.sandbox : this.api_base.live
+    clientOptions.headers['Authorization'] = `Bearer ${apiKey}`
+
+    this.httpBaseClient = got.extend(clientOptions)
   }
 
   mergeNewOptions (newOptions) {
@@ -349,7 +411,7 @@ class PayStack {
 
 for (let methodName in apiEndpoints) {
   if (apiEndpoints.hasOwnProperty(methodName)) {
-    PayStack.prototype[methodName] = makeMethod(apiEndpoints[methodName])
+    PayStack.prototype[methodName] = makeMethod(apiEndpoints[methodName], methodName)
   }
 }
 
