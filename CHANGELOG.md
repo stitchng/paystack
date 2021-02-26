@@ -1,3 +1,11 @@
+<a name="0.2.6"></a>
+# 0.2.6 (2021-02-27)
+
+### Features Added
+- Updated `lodash` dependency to _v4.17.21_ from _v4.17.19_ to fix ReDoS vulnerability
+- Beta: Added ability to mock `PayStack` instance by [@isocroft](https://github.com/isocroft)
+- Added _Dedicated Nuban_ API Endpoint methods by [@isocroft](https://github.com/isocroft)
+
 <a name="0.2.5"></a>
 # 0.2.5 (2020-07-18)
 

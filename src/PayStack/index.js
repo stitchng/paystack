@@ -18,6 +18,7 @@ const charges = require('../endpoints/charges.js')
 const invoices = require('../endpoints/invoices.js')
 const transfers = require('../endpoints/transfers.js')
 const verifications = require('../endpoints/verifications.js')
+const dedicatedNuban = require('../endpoints/dedicated_nuban.js')
 const miscellaneous = require('../endpoints/miscellaneous.js')
 const settlements = require('../endpoints/settlements.js')
 const subscriptions = require('../endpoints/subscriptions.js')
@@ -42,6 +43,7 @@ const apiEndpoints = Object.assign(
   transfers,
   verifications,
   miscellaneous,
+  dedicatedNuban,
   settlements,
   subscriptions,
   transferRecipients,
@@ -203,7 +205,7 @@ const setInputValues = (config, inputs) => {
           : null
 
         if (httpReqOptions[label][param] === null) {
-          throw new Error(`param: "${param}" is not of type ${_type.name || _type}; please provided as needed`)
+          throw new TypeError(`param: "${param}" is not of type ${_type.name || _type}; please provided as needed`)
         }
       }
     }
@@ -266,62 +268,69 @@ const makeMethod = function (config, methodName) {
       payload = {}
     }
 
-    let reqBodyTag = 'body'
+    let reqBody = {}
 
     for (let type in payload) {
       if (payload.hasOwnProperty(type)) {
-        httpConfig[type] = (type === 'query') 
-          ? payload[type] 
+        reqBody = httpConfig[type] = (type === 'query')
+          ? payload[type]
           : JSON.parse(payload[type])
-        reqBodyTag = type
         break
       }
     }
 
-    let reqVerb = config.method.toLowerCase()
+    const reqVerb = config.method.toLowerCase()
 
-    const reqBody = httpConfig[reqBodyTag] || {}
     const canInvokeTestingMock = (
-      this._mock !== null 
-      && typeof this._mock[methodName] === 'function'
+      this._mock !== null &&
+      typeof this._mock[methodName] === 'function'
     )
 
-    if (canInvokeTestingMock) {
-      delete httpConfig[reqBodyTag]
+    if (this._mock !== null &&
+      canInvokeTestingMock) {
+      throw new TypeError(
+        typeof this._mock[methodName] +
+        ' is not a function'
+      )
+    }
 
-      if (methodName !== 'chargeBank' 
-          && methodName !== 'chargeCard') {
+    if (canInvokeTestingMock) {
+      if (methodName !== 'chargeBank' &&
+          methodName !== 'chargeCard') {
         return this._mock[methodName](
           Object.assign(
-            httpConfig, 
+            httpConfig,
             { 'method': config.method }
-          ), reqBody)
-      } else if (isTypeOf(reqBody.card, Object) 
-                 || isTypeOf(reqBody.bank, Object)) {
+          ))
+      } else if (isTypeOf(reqBody.card, Object) ||
+                 isTypeOf(reqBody.bank, Object)) {
+        /* eslint-disable camelcase */
         const { cvv, expiry_month, expiry_year } = reqBody.card
         const { code, account_number } = reqBody.bank
+        /* eslint-enable camelcase */
 
         // Visa OR Verve
         const isTestCardPan = /^408408(4084084081|0000000409|0000005408)$/.test(reqBody.card.number)
-        const isTestCardCVV = "408" === String(cvv);
-        const isTestCardExpiry = "02" === String(expiry_month) && "22" === String(expiry_year);
+        const isTestCardCVV = String(cvv) === '408'
+        const isTestCardExpiry = String(expiry_month) === '02' && String(expiry_year) === '22'
         const isTestCard = (isTestCardPan && isTestCardCVV && isTestCardExpiry)
 
         // Zenith Bank OR First Bank
         const isTestBankCode = /^(?:057|011)$/.test(String(code))
-        const isTestBankAccount = "0000000000" === account_number
+        /* eslint-disable-next-line camelcase */
+        const isTestBankAccount = account_number === '0000000000'
         const isTestBank = (isTestBankCode && isTestBankAccount)
 
         if (!isTestCard || !isTestBank) {
           return this._mock[methodName](
             Object.assign(
-              httpConfig, 
+              httpConfig,
               { 'method': config.method }
-            ), reqBody
+            )
           )
         }
       }
-    } 
+    }
     return this.httpBaseClient[reqVerb](pathname, httpConfig)
   }
 }
@@ -348,7 +357,7 @@ class PayStack extends Mockable {
           }
         ],
         afterResponse: [
-          (response, retryWithMergedOptions) => {
+          (response) => {
             let errorMessage = ''
             switch (response.statusCode) {
               case 400: // Bad Request
@@ -370,12 +379,12 @@ class PayStack extends Mockable {
             }
 
             if (errorMessage !== '') {
-              const error = new Error(errorMessage);
+              const error = new Error(errorMessage)
               if (response._isMocked) {
-                 error.response = response;
+                error.response = response
               }
-              error.name = 'PayStackAPIError';
-              throw error;
+              error.name = 'PayStackAPIError'
+              throw error
             }
 
             return response
@@ -387,16 +396,17 @@ class PayStack extends Mockable {
   }
 
   constructor (apiKey, appEnv = 'development') {
+    super()
     const environment = /^(?:development|local|dev)$/
 
-    const api_base = {
+    const apiBase = {
       sandbox: 'https://api.paystack.co',
       live: 'https://api.paystack.co'
     }
 
     const clientOptions = this.httpClientBaseOptions
 
-    clientOptions.baseUrl = environment.test(appEnv) ? this.api_base.sandbox : this.api_base.live
+    clientOptions.baseUrl = environment.test(appEnv) ? apiBase.sandbox : apiBase.live
     clientOptions.headers['Authorization'] = `Bearer ${apiKey}`
 
     this.httpBaseClient = got.extend(clientOptions)
@@ -414,5 +424,10 @@ for (let methodName in apiEndpoints) {
     PayStack.prototype[methodName] = makeMethod(apiEndpoints[methodName], methodName)
   }
 }
+
+PayStack.excludeOnMock = [
+  'httpClientBaseOptions',
+  'version'
+]
 
 module.exports = PayStack

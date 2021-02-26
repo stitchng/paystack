@@ -39,12 +39,12 @@ const feeCharge = feesCalculator.calculateFor(250000) // 2,500 Naira
   using `toJSON()` method for date instances/objects
 */
 
-const promise0 = paystack.getSettlements({
+const promise_0 = paystack.getSettlements({
   from:new Date("2017-02-09"), 
   to:new Date()
 })
 
-promise0.then(function(response){
+promise_0.then(function(response){
   var data = response.body.data;
 }).catch(function (error){
   // deal with error
@@ -196,6 +196,72 @@ app.use(async function verifications(req, res, next){
 
 ```
 
+### Mocking the Instance (for Unit Tests)
+>Setting up mocks for testing with the paystack instance is now as easy as fliping a switch like so:
+
+```js
+
+let PayStack = require('paystack-node')
+
+let APIKEY = 'sk_live_2hWyQ6HW73jS8p1IkXmSWOlE4y9Inhgyd6g5f2R7'
+const environment = process.env.NODE_ENV
+
+const paystack = new PayStack(APIKEY, environment)
+
+// call the real API methods
+const { body } = paystack.chargeCard({
+  card:{
+    number: '5399837841116788', // mastercard
+    cvv: '324',
+    expiry_year: '2024',
+    expiry_month: '08'
+  },
+  email: 'me.biodunch@xyz.ng',
+  amount: 15600000 // 156,000 Naira in kobo
+})
+
+// mocking call made on the constructor
+// start mocking
+PayStack.engageMock()
+
+// call the mock API methods
+const { body } = await paystack.chargeBank({
+  bank: {
+    code: "050", // Eco Bank
+    account_number: "0000000000"
+  },
+  email: 'me.biodunch@xyz.ng',
+  amount: 1850000 // 18,500 Naira in kobo
+})
+
+// replace mocked methods (! don't use arrow functions !)
+PayStack.mockMacro(
+  'getCustomers', 
+  async function getCustomers (reqPayload = {}) {
+    if (!(reqPayload instanceof Object)) {
+      throw new TypeError(
+        'Argument: [ requestParam(s) ] Should Be An Object Literal'
+      )
+    }
+    // validate {reqPayload} key/value pairs
+    if (!reqPayload.customer_id 
+      || typeof reqPayload.customer_id !== 'string') {
+      return new TypeError(`param: "customer_id" is not of type ${typeof reqPayload.customer_id}; please provided as needed`)
+    }
+    // @TODO: connect to a in-memory db (redis) for mocking purposes
+
+    return { body: { statsu: true, data: reqPayload } };
+})
+
+const { body } = await paystack.getCustomers({
+  customer_id:'CUS_e24m6SqA6g3Jk889o21'
+})
+
+// stop mocking
+// mocking call made on the constructor
+PayStack.disengageMock()
+```
+
 ## API Resources
 
 >Each method expects an object literal with both **route parameters** and **request parameters (query / body)**. Please, go through the _src/endpoints_ folder to see the specific items that should make up the object literal for each method
@@ -209,6 +275,11 @@ app.use(async function verifications(req, res, next){
   - paystack.setRiskActionOnCustomer()
 - disputes
   - paystack.listDisputes()
+- dedicated nuban
+  - paystack.createDedicatedNuban()
+  - paystack.listDedicatedNubans()
+  - paystack.fetchDedicatedNuban()
+  - paystack.deactivateDedicatedNuban()
 - invoices
   - paystack.createInvoice()
   - paystack.getMetricsForInvoices()
