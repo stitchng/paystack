@@ -11,7 +11,33 @@ module.exports = {
     method: 'POST',
     path: '/charge',
     send_json: true,
-    params: { card$: Object, metadata: Object, reference: String, ussd: Object, pin: String, authorization_code: String, mobile_money: Object, device_id: String, amount$: String, email$: String },
+    params: { card$: Object, metadata: Object, reference: String, pin: String, authorization_code: String, device_id: String, amount$: String, email$: String },
+    param_defaults: null,
+    route_params: null
+  },
+
+  /*
+   Charge USSD
+   @param: ussd, metadata, reference, amount, email
+  */
+  chargeUssd: {
+    method: 'POST',
+    path: '/charge',
+    send_json: true,
+    params: { ussd$: Object, metadata: Object, reference: String, pin: String, authorization_code: String, device_id: String, amount$: String, email$: String },
+    param_defaults: { ussd: { type: '737' } },
+    route_params: null
+  },
+
+  /*
+   Charge Mobile Money
+   @param: mobile_money, currency, metadata, reference, amount, email
+  */
+  chargeMobileMoney: {
+    method: 'POST',
+    path: '/charge',
+    send_json: true,
+    params: { mobile_money$: Object, currency: String, metadata: Object, reference: String, pin: String, authorization_code: String, device_id: String, amount$: String, email$: String },
     param_defaults: null,
     route_params: null
   },
@@ -24,7 +50,7 @@ module.exports = {
     method: 'POST',
     path: '/charge',
     send_json: true,
-    params: { bank$: Object, metadata: Object, reference: String, ussd: Object, pin: String, authorization_code: String, mobile_money: Object, device_id: String, amount$: String, email$: String },
+    params: { bank$: Object, metadata: Object, reference: String, pin: String, authorization_code: String, mobile_money: Object, device_id: String, amount$: String, email$: String },
     route_params: null
   },
 
@@ -73,6 +99,18 @@ module.exports = {
     path: '/charge/submit_birthday',
     send_json: true,
     params: { birthday$: Date, reference$: String },
+    route_params: null
+  },
+
+  /*
+   Submit Address
+   @param: address, reference, city, state, zipcode
+  */
+  submitAddress: {
+    method: 'POST',
+    path: '/charge/submit_address',
+    send_json: true,
+    params: { address$: String, reference$: String, city$: String, state$: String, zipcode: String },
     route_params: null
   },
 

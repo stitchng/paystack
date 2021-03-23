@@ -14,7 +14,6 @@ describe('PayStack Instance Test(s)', function () {
     expect(Object.prototype.toString.call(instance._mock)).to.be.equal('[object Null]')
 
     PayStack.engageMock()
-
     // mock now enabled
     expect(Object.prototype.toString.call(instance._mock)).to.be.equal('[object Object]')
     /* eslint-disable no-unused-expressions */

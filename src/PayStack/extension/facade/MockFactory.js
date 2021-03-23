@@ -24,10 +24,13 @@ module.exports = {
             }
             return resolve({
               status: 200,
+              statusText: 'OK',
               body: {
                 status: true,
                 message: 'successfull paystack request {' + method + '}',
-                data: data
+                data: data || {
+                  status: 'success'
+                }
               }
             })
           }, 750, args[0])

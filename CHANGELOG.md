@@ -1,3 +1,16 @@
+<a name="0.3.0"></a>
+# 0.3.0 (2021-03-23)
+
+### Added Features
+- Added the **submitAddress()** Endpoint method
+- Added the **chargeUssd()** Endpoint method
+- Added the **chargeMobileMoney()** Endpoint method
+- Added the **resolveBVNPremium()** Endpoint method
+- Added the **listProviders()** Endpoint method
+
+### Bug Fixes
+- Fixed error _"TypeError: function is not a function"_ when mock is enabled 
+
 <a name="0.2.6"></a>
 # 0.2.6 (2021-02-27)
 

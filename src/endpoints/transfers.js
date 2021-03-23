@@ -3,12 +3,12 @@
 module.exports = {
   /*
       Initiate Transfer
-      @param: source(required), reason, amount(required), recipient(required), currency, reference(required)
+      @param: source(required), reason, amount(required), recipient(required), currency, reference
     */
   initiateTransfer: {
     method: 'POST',
     path: '/transfer',
-    params: { source$: String, reason: String, amount$: Number, recipient$: String, currency: String, reference$: String },
+    params: { source$: String, reason: String, amount$: Number, recipient$: String, currency: String, reference: String },
     send_json: true,
     param_defaults: { source: 'balance', currency: 'NGN' },
     route_params: null

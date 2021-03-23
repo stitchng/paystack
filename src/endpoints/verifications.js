@@ -2,9 +2,9 @@
 
 module.exports = {
   /*
-      Resolve Bank Verification Number
-      @param: bvn
-    */
+    Resolve Bank Verification Number (Standard)
+    @param: bvn
+  */
   resolveBVN: {
     method: 'GET',
     path: '/bank/resolve_bvn/{:bvn}',
@@ -12,10 +12,23 @@ module.exports = {
     param_defaults: null,
     route_params: { bvn: String }
   },
+
   /*
-      Match Bank Verification Number
-      @param: bvn (required), account_number(required), bank_code (required), first_name, middle_name, last_name
-    */
+    Resolve Bank Verification Number (Premium)
+    @param: bvn
+  */
+  resolveBVNPremium: {
+    method: 'GET',
+    path: 'identity/bvn/resolve/{:bvn}',
+    params: null,
+    param_defaults: null,
+    route_params: { bvn: String }
+  },
+
+  /*
+    Match Bank Verification Number
+    @param: bvn (required), account_number(required), bank_code (required), first_name, middle_name, last_name
+  */
   matchBVN: {
     method: 'POST',
     path: '/bvn/match',
@@ -24,10 +37,11 @@ module.exports = {
     param_defaults: null,
     route_params: null
   },
+
   /*
-      Resolve Account Number
-      @param: account_number(required), bank_code (required)
-    */
+    Resolve Account Number
+    @param: account_number(required), bank_code (required)
+  */
   resolveAccountNumber: {
     method: 'GET',
     path: '/bank/resolve',
@@ -37,9 +51,9 @@ module.exports = {
   },
 
   /*
-      Resolve Card Bin
-      @param: bin
-    */
+    Resolve Card Bin
+    @param: bin
+  */
   resolveCardBin: {
     method: 'GET',
     path: '/decision/bin/{:bin}',
@@ -49,9 +63,9 @@ module.exports = {
   },
 
   /*
-      Resolve Phone Number
-      @param: verification_type, phone, callback_url
-    */
+    Resolve Phone Number
+    @param: verification_type, phone, callback_url
+  */
   resolvePhoneNumber: {
     method: 'POST',
     path: '/verifications',

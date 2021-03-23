@@ -286,14 +286,6 @@ const makeMethod = function (config, methodName) {
       typeof this._mock[methodName] === 'function'
     )
 
-    if (this._mock !== null &&
-      canInvokeTestingMock) {
-      throw new TypeError(
-        typeof this._mock[methodName] +
-        ' is not a function'
-      )
-    }
-
     if (canInvokeTestingMock) {
       if (methodName !== 'chargeBank' &&
           methodName !== 'chargeCard') {

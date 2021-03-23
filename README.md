@@ -129,7 +129,7 @@ const promise5 = paystack.createPage({
   description:'This is payment for every ',
   amount:300000, // Amount in kobo
   slug:'5nApBwZkvR',
-  redirect_url:'https://www.localhost.com/pay/callback',
+  redirect_url:'https://www.localhoster.com/pay/callback',
   custom_fields: ['phone_number', 'age']
 })
 
@@ -238,19 +238,12 @@ const { body } = await paystack.chargeBank({
 PayStack.mockMacro(
   'getCustomers', 
   async function getCustomers (reqPayload = {}) {
-    if (!(reqPayload instanceof Object)) {
-      throw new TypeError(
-        'Argument: [ requestParam(s) ] Should Be An Object Literal'
-      )
-    }
-    // validate {reqPayload} key/value pairs
-    if (!reqPayload.customer_id 
-      || typeof reqPayload.customer_id !== 'string') {
-      return new TypeError(`param: "customer_id" is not of type ${typeof reqPayload.customer_id}; please provided as needed`)
-    }
+    // validation for (reqPayload) is already taken care of!
+
     // @TODO: connect to a in-memory db (redis) for mocking purposes
 
-    return { body: { statsu: true, data: reqPayload } };
+    // return mocked response object
+    return { status: 200, body: { status: "success", data: reqPayload } };
 })
 
 const { body } = await paystack.getCustomers({
@@ -341,6 +334,7 @@ PayStack.disengageMock()
   - paystack.updateSubaccount()
 - verifications
   - paystack.resolveBVN()
+  - paystack.resolveBVNPremium()
   - paystack.matchBVN()
   - paystack.resolveAccountNumber()
   - paystack.resolveCardBin()
@@ -359,13 +353,17 @@ PayStack.disengageMock()
 - charges
   - paystack.chargeCard()
   - paystack.chargeBank()
+  - paystack.chargeUssd()
+  - paystack.chargeMobileMoney()
   - paystack.submitPIN()
   - paystack.submitOTP()
   - paystack.submitPhone()
   - paystack.submitBirthday()
+  - paystack.submitAddress()
   - paystack.checkPendingCharge()
 - miscellanous
   - paystack.listBanks()
+  - paystack.listProviders()
   - paystack.listCountries()
 
 # License
