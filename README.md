@@ -196,7 +196,7 @@ app.use(async function verifications(req, res, next){
 
 ```
 
-### Mocking the Instance (for Unit Tests)
+### Mocking the Instance (for Unit/Integration Tests)
 >Setting up mocks for testing with the paystack instance is now as easy as fliping a switch like so:
 
 ```js
@@ -240,7 +240,7 @@ PayStack.mockMacro(
   async function getCustomers (reqPayload = {}) {
     // validation for (reqPayload) is already taken care of!
 
-    // @TODO: connect to a in-memory db (redis) for mocking purposes
+    // @TODO: optionally, connect to a in-memory db (redis) for mocking purposes
 
     // return mocked response object
     return { status: 200, body: { status: "success", data: reqPayload } };
