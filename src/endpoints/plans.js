@@ -47,8 +47,8 @@ module.exports = {
     method: 'PUT',
     path: '/plan/{:id_or_plan_code}',
     send_json: true,
-    params: { name$: String, interval$: String, currency: String, amount$: Number, send_invoices: Boolean, send_sms: Boolean, invoice_limit: Number, description: String },
-    param_defaults: { interval: 'monthly', currency: 'NGN', send_invoices: false, send_sms: false, invoice_limit: 0 },
+    params: { name$: String, currency: String, amount$: Number, send_invoices: Boolean, send_sms: Boolean, invoice_limit: Number, description: String },
+    param_defaults: { currency: 'NGN', send_invoices: false, send_sms: false, invoice_limit: 0 },
     route_params: { id_or_plan_code: String }
   }
 }
