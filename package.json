@@ -11,6 +11,7 @@
     "test": "test"
   },
   "scripts": {
+    "lint": "standard --fix",
     "test": "mocha \"test/*.test.js\""
   },
   "keywords": [
