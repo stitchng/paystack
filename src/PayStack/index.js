@@ -75,21 +75,99 @@ _.mixin(function () {
   }
 }())
 
+/**
+ * check if a variable literal (or not) is falsy or not
+ */
 const isLiteralFalsey = (variable) => {
-  return (variable === '' || variable === false || variable === 0)
+  return variable === '' || variable === false || variable === 0
 }
 
+/**
+ * check if a variable is a reference type (not a literal) or not
+ */
+
+const isPrimitive = (arg) => {
+   return typeof arg === 'object' || (Boolean(arg) && typeof arg === 'function')
+}
+
+/**
+ * retrieve the type name either from a reference variables' constructor name or up its' prototype chain
+*/
+const getNameByChain = (_type, depth) => {
+  let $depth = depth;
+
+  if(typeof $depth !== 'number'){
+    $depth = 1;
+  }
+
+  let name = _type.name || _type.displayName
+  const chainList = [(_type.__proto__ && _type.__proto__.prototype)];
+
+  while(Boolean(chainList[0]) && $depth !== 0){
+    const variable = chainList[0].constructor;
+    if(typeof variable !== 'function'){
+      break;
+    }
+    name = variable.name || variable.displayName
+    --depth
+    chainList.unshift((variable.__proto__ && variable.__proto__.prototype));
+  }
+  chainList.length = 0
+
+  return name
+}
+
+/**
+ * provide the name of primitive and/or reference types
+ */
 const checkTypeName = (target, type) => {
   let typeName = ''
-  if (isLiteralFalsey(target)) {
-    typeName = (typeof target)
-  } else {
-    typeName = ('' + (target && target.constructor.name))
+  let match = false
+  let depth = 0
+  const MAX_DEPTH = 3
+
+  if(typeof type === 'function'){
+    type = (getNameByChain(type, depth)).toLowerCase()
   }
-  return !!(typeName.toLowerCase().indexOf(type) + 1)
+
+  if (isLiteralFalsey(target) || !isPrimitive(target)) {
+    typeName = typeof target
+  } else {
+    typeName = (Object.prototype.toString.call(target)).replace(/^\[object (.+)\]$/, '$1') 
+  }
+
+  match = Boolean(typeName.toLowerCase().indexOf(type) + 1)
+
+  while(!match){
+    ++depth;
+    if(depth === MAX_DEPTH){
+      break;
+    }
+
+    typeName = '' + (target && getNameByChain(target.constructor, depth))
+    match = Boolean(typeName.toLowerCase().indexOf(type) + 1)
+  }
+
+  return match;
 }
 
-const isTypeOf = (value, type) => {
+/**
+ * get the actual type of a variable
+ */
+
+/*!
+ * @EXAMPLES:
+ * 
+ * strictTypeOf([], 'Array'); // true
+ * strictTypeOf({}, 'object'); // true
+ * strictTypeOf(null, 'null'); // true
+ * strictTypeOf(window.localStorage, Storage); // true
+ * strictTypeOf('hello!', 'Boolean'); // false
+ * strictTypeOf(new URL('/', window.location.origin), 'url'); // true
+ * strictTypeOf(0x35, ['number', 'string']); // true
+ * strictTypeOf("200,000", ['number', 'string']); // true
+ */
+const strictTypeOf = (value, type) => {
   let result = false
 
   type = type || []
@@ -100,50 +178,78 @@ const isTypeOf = (value, type) => {
     }
 
     let bitPiece = 0
+
     type = [].slice.call(type)
 
     type.forEach(_type => {
+      var localResult = false;
       if (typeof _type === 'function') {
-        _type = (_type.name || _type.displayName).toLowerCase()
+          localResult = value instanceof _type
       }
-      bitPiece |= (1 * (checkTypeName(value, _type)))
+      bitPiece |= Number(localResult || checkTypeName(value, _type.toLowerCase()))
     })
-
-    result = !!(bitPiece)
+    result = Boolean(bitPiece)
   } else {
     if (typeof type === 'function') {
-      type = (type.name || type.displayName).toLowerCase()
+      result = value instanceof type
     }
-
-    result = checkTypeName(value, type)
+    result = result || checkTypeName(value, type.toLowerCase())
   }
-
   return result
 }
 
+const matcherValid = (value, matcher = () => true) => {
+  return matcher(value);
+}
+
 const isNullOrUndefined = (value) => {
-  return isTypeOf(value, ['undefined', 'null'])
+  return strictTypeOf(value, ['undefined', 'null'])
 }
 
 const isNumeric = (value) => {
-  if (isTypeOf(value, ['string', 'number'])) {
-    return isTypeOf(Math.abs(-value), 'number')
+  if (strictTypeOf(value, ['string', 'number'])) {
+    return strictTypeOf(Math.abs(-value), 'number')
   }
   return false
 }
+
+const objectToJSONString = (value) => {
+  const isValidObject = value instanceof Object;
+  if (!value || !isValidObject) {
+    throw new TypeError(
+      "objectToJSONString(...): argument 1 is not a valid object"
+    )
+  }
+
+  const isDateObject = value instanceof Date;
+
+  if (!isDateObject && ('toJSON' in value)) {
+    return value.toJSON();
+  }
+    
+  return isDateObject 
+    ? value.toISOString().replace(/Z$/, '')
+    : JSON.stringify(value);
+};
+
 
 const setPathName = (config, values) => {
   return config.path.replace(/\{:([\w]+)\}/g, function (
     match,
     string,
     offset) {
-    let _value = values[string] || (isTypeOf(config.alternate_route_params_keymap, 'object') ? values[config.alternate_route_params_keymap[string]] : false)
+    let _value = values[string] || (
+      strictTypeOf(config.alternate_route_params_keymap, 'object')
+        ? values[config.alternate_route_params_keymap[string]]
+        : false
+    );
+
     if (config.route_params_numeric === true) {
       if (!isNumeric(_value)) {
         return null
       }
     }
-    return isTypeOf(
+    return strictTypeOf(
       _value,
       (config.route_params[string] || String)
     )
@@ -153,10 +259,13 @@ const setPathName = (config, values) => {
 }
 
 const _jsonify = (data) => {
-  return isNullOrUndefined(data) ? 'null'
-    : (typeof data === 'object'
-      ? (data instanceof Date ? data.toISOString().replace(/Z$/, '') : (('toJSON' in data) ? data.toJSON().replace(/Z$/, '') : JSON.stringify(data)))
-      : String(data))
+  if (isNullOrUndefined(data)) {
+    return 'null';
+  }
+
+  return typeof data === 'object'
+    ? objectToJSONString(data)
+    : String(data)
 }
 
 const setInputValues = (config, inputs) => {
@@ -198,14 +307,23 @@ const setInputValues = (config, inputs) => {
       if (isNullOrUndefined(_input) || _input === '') {
         if (_required) { throw new Error(`param: "${param}" is required but not provided; please provide as needed`) }
       } else {
-        httpReqOptions[label][param] = isTypeOf(_input, _type)
+        if (!strictTypeOf(_input, _type)) {
+          throw new Error(
+            `param: "${param}" is not of the correct type "${_type.toLowerCase()}"; please provide as needed`
+          );
+        }
+
+        httpReqOptions[label][param] = matcherValid(
+          _input,
+          'param_matchers' in config ? config.param_matchers[param] : (() => true)
+        )
           ? (label === 'query'
             ? querystring.escape(_jsonify(_input))
             : _jsonify(_input))
           : null
 
         if (httpReqOptions[label][param] === null) {
-          throw new TypeError(`param: "${param}" is not of type ${_type.name || _type}; please provided as needed`)
+          throw new TypeError(`param: "${param}" value: '${_input}' did not pass matcher; please provide as needed`)
         }
       }
     }
@@ -231,7 +349,7 @@ const makeMethod = function (config, methodName) {
   }
 
   if (config.send_json) {
-    httpConfig.headers['Content-Type'] = httpConfig.headers['Accept'] // 'application/json'
+    httpConfig.headers['Content-Type'] = 'application/json'
     httpConfig.form = false
   } else if (config.send_form) {
     httpConfig.headers['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -259,7 +377,7 @@ const makeMethod = function (config, methodName) {
     } else {
       if (config.params !== null || config.route_params !== null) {
         throw new TypeError(
-          'Argument: [ requestParam(s) ] Not Meant To Be Empty!'
+          'Argument: [ requestParam(s) ] Should Not Be Empty!'
         )
       }
     }
